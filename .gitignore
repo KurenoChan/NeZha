@@ -1,0 +1,15 @@
+.vs/
+bin/
+obj/
+Assets/
+*.user
+*.suo
+*.log
+*.db
+x64/
+Debug/
+Release/
+*.exe
+*.pdb
+*.ilk
+*.obj
