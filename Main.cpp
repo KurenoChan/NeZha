@@ -1355,6 +1355,18 @@ void DrawSphere(GLUquadricObj* quadric, float radius, int slices, int stacks)
 	glPopMatrix();
 }
 
+void DrawSemiSphere(GLUquadricObj* quadric, float radius, int slices, int stacks)
+{
+	// Define clipping plane (cuts along X axis to keeps one half)
+	GLdouble plane[] = { 1.0, 0.0, 0.0, 0.0 };
+	// Equation: x >= 0 side is kept
+	// Enable clipping
+	glEnable(GL_CLIP_PLANE0);
+	glClipPlane(GL_CLIP_PLANE0, plane);
+	// Draw full sphere (but clipped)
+	DrawSphere(quadric, radius, slices, stacks);
+	glDisable(GL_CLIP_PLANE0);
+}
 
 // -----------------
 // PROJECTION SETUP
@@ -1573,7 +1585,6 @@ void DrawRightEyelash()
 	glPopMatrix();
 }
 
-
 void DrawLip(float length)
 {
 	float lipLength = length / 3;
@@ -1719,23 +1730,201 @@ void DrawNose()
 	DrawNoseMiddle();
 }
 
+// ---------------
+// NECK COMPONENTS
+// ---------------
+
+void DrawNeck()
+{
+	float neckRadius = 0.03f;
+	float neckHeight = 0.09f;
+
+	glPushMatrix();
+	glTranslatef(0.0f, 0.0f, 0.0f);
+	DrawEnclosedCylinder(quadric, neckRadius, neckRadius, neckHeight, SLICES, STACKS);
+	glPopMatrix();
+}
+
 // ----------------
 // TORSO COMPONENTS
 // ----------------
 
+void DrawTorsoPart(float baseHeight)
+{
+	float baseRadius = 0.1f;
 
+	// Center Base
+	glPushMatrix();
+	glScalef(1.5f, 1.0f, 0.5f);
+	DrawEnclosedCylinder(quadric, baseRadius, baseRadius, baseHeight, SLICES, STACKS);
+
+	// Sholder / Pelvis
+	glPushMatrix();
+	glTranslatef(0.0f, baseHeight * 0.5f, 0.0f);
+	glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
+	DrawSemiSphere(quadric, baseRadius, SLICES, STACKS);
+	glPopMatrix();
+	// END Sholder / Pelvis
+
+	//// Waist 
+	//glPushMatrix();
+	//glTranslatef(0.0f, -baseHeight * 0.5f, 0.0f);
+	//glRotatef(-90.0f, 0.0f, 0.0f, 1.0f);
+	//DrawSemiSphere(quadric, baseRadius, SLICES, STACKS);
+	//glPopMatrix();
+	//// END Waist / Pelvis
+
+	glPopMatrix();
+	// END Center Base
+}
 
 // --------------
 // ARM COMPONENTS
 // --------------
 
+void DrawUpperArm(float armLength)
+{
+	float baseRadius = 0.05f;
 
+	// Upper Arm Joint
+	glPushMatrix();
+	DrawSphere(quadric, baseRadius, SLICES, STACKS);
+
+	// Upper Arm
+	glPushMatrix();
+	glTranslatef(-armLength / 2, 0.0f, 0.0f);
+	glRotatef(88.0f, 0.0f, 0.0f, 1.0f);
+	DrawEnclosedCylinder(quadric, baseRadius * 0.8f, baseRadius * 0.45f, armLength, SLICES, STACKS);
+	glPopMatrix();
+	// END Upper Arm
+
+	glPopMatrix();
+	// END Upper Arm Joint
+}
+
+void DrawLowerArm(float armLength)
+{
+	float upperBaseRadius = 0.05f;
+	float baseRadius = 0.03f;
+
+	// Lower Arm Joint
+	glPushMatrix();
+	DrawSphere(quadric, upperBaseRadius * 0.6f, SLICES, STACKS);
+
+	// Lower Arm
+	glPushMatrix();
+	glTranslatef(-armLength / 2, 0.0f, 0.0f);
+	glRotatef(88.0f, 0.0f, 0.0f, 1.0f);
+	DrawEnclosedCylinder(quadric, baseRadius * 0.7f, baseRadius * 0.55f, armLength, SLICES, STACKS);
+	glPopMatrix();
+	// END Lower Arm
+
+	glPopMatrix();
+	// END Lower Arm Joint
+}
+
+void DrawFinger(float length)
+{
+	float jointRadius = 0.01f;
+
+	// Finger Joint
+	glPushMatrix();
+	DrawSphere(quadric, jointRadius, SLICES, STACKS);
+
+	// Finger
+	glPushMatrix();
+	glTranslatef(0.0f, 0.0f, length / 2);
+	glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+	DrawEnclosedCylinder(quadric, jointRadius * 0.8f, jointRadius * 0.5f, length, SLICES, STACKS);
+
+	// Finger Tip
+	glPushMatrix();
+	glTranslatef(0.0f, length / 2, 0.0f);
+	DrawSphere(quadric, jointRadius * 0.5f, SLICES, STACKS);
+	glPopMatrix();
+	// END Finger Tip
+
+	glPopMatrix();
+	// END Finger
+
+	glPopMatrix();
+	// END Finger Joint
+}
+
+void DrawHand()
+{
+	float baseRadius = 0.03f;
+
+	float thumbLength = 0.03f;
+
+	// Palm
+	glPushMatrix();
+	glScalef(1.5f, 0.75f, 1.5f);
+	DrawSphere(quadric, baseRadius, SLICES, STACKS);
+
+	// Thumb Finger
+	glPushMatrix();
+	glTranslatef(baseRadius * 0.3f, 0.0f, baseRadius * 0.9f);
+	glRotatef(-70.0f, 0.0f, 1.0f, 0.0f);
+	DrawFinger(thumbLength);
+	glPopMatrix();
+	// END Thumb Finger
+
+	glPopMatrix();
+	// END Palm
+}
+
+void DrawArm()
+{
+	float upperArmLength = 0.15f;
+	float lowerArmLength = 0.17f;
+
+	// Upper Arm
+	glPushMatrix();
+	DrawUpperArm(upperArmLength);
+
+	// Lower Arm
+	glPushMatrix();
+	glTranslatef(-(upperArmLength / 2 + lowerArmLength / 2), 0.0f, 0.0f);
+	DrawLowerArm(lowerArmLength);
+
+	// Hand
+	glPushMatrix();
+	glTranslatef(-lowerArmLength, 0.0f, 0.0f);
+	DrawHand();
+	glPopMatrix();
+	// END Hand
+
+	glPopMatrix();
+	// END Lower Arm
+
+	glPopMatrix();
+	// END Upper Arm
+}
 
 // --------------
 // LEG COMPONENTS
 // --------------
 
+void DrawUpperLeg()
+{
 
+}
+
+void DrawLowerLeg()
+{
+
+}
+
+void DrawFoot()
+{
+
+}
+
+void DrawLeg()
+{
+
+}
 
 // ========================
 // CHARACTER PARTS ASSEMBLY
@@ -1743,51 +1932,84 @@ void DrawNose()
 
 void DrawHead()
 {
-	glPushMatrix();
-
 	// Head
+	glPushMatrix();
 	DrawHeadBase();
 	DrawUpperHead();
 	DrawLowerHead();
-	// END Head
 
 	// Eyes
+	glPushMatrix();
 	DrawLeftEye();
 	DrawRightEye();
+	glPopMatrix();
 	// END Eyes
 
 	// Eyelashes
+	glPushMatrix();
 	DrawLeftEyelash();
 	DrawRightEyelash();
+	glPopMatrix();
 	// END Eyelashes
 
 	// Mouth
+	glPushMatrix();
 	DrawMouth();
+	glPopMatrix();
 	// END Mouth
 
 	// Ears
+	glPushMatrix();
 	DrawLeftEar();
 	DrawRightEar();
+	glPopMatrix();
 	// END Ears
 
 	// Nose
+	glPushMatrix();
 	DrawNose();
+	glPopMatrix();
 	// END Nose
 
 	glPopMatrix();
+	// END Head
 }
 
 void DrawTorso()
 {
+	float baseHeight = 0.08f;
+
+	// Upper Torso
+	glPushMatrix();
+	//glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
+	DrawTorsoPart(baseHeight);
+	glPopMatrix();
+	// END Upper Torso
+
+	// Lower Torso
+	glPushMatrix();
+	glTranslatef(0.0f, -baseHeight, 0.0f);
+	glScalef(1.0f, -1.0f, 1.0f);
+	DrawTorsoPart(baseHeight);
+	glPopMatrix();
+	// END Lower Torso
 
 }
 
-void DrawArm()
+void DrawArms()
 {
+	float torsoOffsetX = 0.13f;
+	float torsoBaseHeight = 0.05f;
 
+	// Left Arm
+	glPushMatrix();
+	glTranslatef(-torsoOffsetX, torsoBaseHeight, 0.0f);
+	DrawArm();
+	glPopMatrix();
+	// END Left Arm
 }
 
-void DrawLeg()
+void DrawLegs()
 {
 
 }
@@ -1799,11 +2021,35 @@ void DrawLeg()
 
 void DrawCharacter()
 {
+	// Torso
+	glPushMatrix();
+	DrawTorso();
+
+	// Neck
+	glPushMatrix();
+	glTranslatef(0.0f, 0.15f, 0.0f);
+	DrawNeck();
+
 	// Head
 	glPushMatrix();
+	glTranslatef(0.0f, 0.12f, 0.0f);
 	DrawHead();
 	glPopMatrix();
 	// END Head
+
+	glPopMatrix();
+	// END Neck
+
+
+	// Arms
+	glPushMatrix();
+	DrawArms();
+	glPopMatrix();
+	// END Arms
+
+
+	glPopMatrix();
+	// END Torso
 }
 
 // ***********************
@@ -1889,10 +2135,12 @@ void Display()
 	// NeZha
 	//glEnable(GL_TEXTURE_2D);
 
-	float characterOffSetZ = -0.5f;
+	float characterOffSetX = 0.0f;
+	float characterOffSetY = -0.15f;
+	float characterOffSetZ = -1.0f;
 	float characterSize = 1.0f;
 	glPushMatrix();
-	glTranslatef(0.0f, 0.0f, characterOffSetZ);
+	glTranslatef(characterOffSetX, characterOffSetY, characterOffSetZ);
 	DrawCharacter();
 	glPopMatrix();
 	// END NeZha
