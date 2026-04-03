@@ -1453,95 +1453,11 @@ void DrawLightIndicator()
 // ***********************
 // CHARACTER FUNCTIONS
 // ***********************
-//void DrawHead()
-//{
-//	float baseRadius = 0.1f;
-//	float baseHeight = 0.1f;
-//
-//	// Base Head Cylinder
-//	glPushMatrix();
-//	glScalef(1.1f, 1.0f, 1.2f);
-//	DrawEnclosedCylinder(quadric, baseRadius, baseRadius, baseHeight, SLICES, STACKS);
-//
-//	// Upper Head Sphere
-//	glPushMatrix();
-//	glScalef(1.02f, 1.0f, 1.02f);
-//	glTranslatef(0.0f, baseHeight / 3, 0.0f);
-//	DrawSphere(quadric, baseRadius, SLICES, STACKS);
-//	glPopMatrix();
-//	// END Upper Head Sphere
-//
-//	// Lower Head Sphere
-//	glPushMatrix();
-//	glScalef(1.01f, 0.6f, 1.01f);
-//	glTranslatef(0.0f, -baseHeight * 0.8f, 0.0f);
-//	DrawSphere(quadric, baseRadius, SLICES, STACKS);
-//	glPopMatrix();
-//	// END Lower Head Sphere
-//
-//
-//	float earSphereRadius = baseRadius * 0.3f;
-//
-//	// Left Ear
-//	glPushMatrix();
-//	glTranslatef(-baseRadius * 1.1f, -earSphereRadius * 0.5f, 0.0f);
-//	glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
-//	glRotatef(20.0f, 0.0f, 0.0f, 1.0f);
-//	glScalef(0.8f, 1.2f, 0.5f);
-//	DrawSphere(quadric, earSphereRadius, SLICES, STACKS);
-//	glPopMatrix();
-//	// END Left Ear
-//
-//	// Right Ear
-//	glPushMatrix();
-//	glTranslatef(baseRadius * 1.1f, -earSphereRadius * 0.5f, 0.0f);
-//	glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
-//	glRotatef(-20.0f, 0.0f, 0.0f, 1.0f);
-//	glScalef(0.8f, 1.2f, 0.5f);
-//	DrawSphere(quadric, earSphereRadius, SLICES, STACKS);
-//	glPopMatrix();
-//	// END Right Ear
-//
-//
-//	// Left Nose
-//	float noseBaseRadius = baseRadius * 0.05f;
-//	float noseBaseHeight = baseHeight * 0.15f;
-//	float noseThickness = 0.7f;
-//	glPushMatrix();
-//	glTranslatef(-noseBaseRadius * 0.5f, 0.0f, baseRadius * 0.99f);
-//	glRotatef(-15.0f, 0.0f, 0.0f, 1.0f);
-//	glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
-//	glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
-//	DrawEnclosedSemiCylinderWithThickness(quadric, noseBaseRadius, noseBaseRadius * 0.5f, noseBaseHeight, noseThickness, SLICES, STACKS, LOOPS);
-//	glPopMatrix();
-//	// END Left Nose
-//
-//	// Right Nose
-//	glPushMatrix();
-//	glTranslatef(noseBaseRadius * 0.5f, 0.0f, baseRadius * 0.99f);
-//	glRotatef(15.0f, 0.0f, 0.0f, 1.0f);
-//	glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
-//	glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
-//	DrawEnclosedSemiCylinderWithThickness(quadric, noseBaseRadius, noseBaseRadius * 0.5f, noseBaseHeight, noseThickness, SLICES, STACKS, LOOPS);
-//	glPopMatrix();
-//	// END Right Nose
-//
-//	// Nose Middle
-//	glPushMatrix();
-//	glTranslatef(0.0f, noseBaseHeight * 0.5f, baseRadius * 0.99f);
-//	glRotatef(0.0f, 1.0f, 0.0f, 0.0f);
-//	glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
-//	DrawEnclosedSemiCylinderWithThickness(quadric, noseBaseRadius * 2.0f, noseBaseRadius * 0.2f * 1.1f, noseBaseHeight * 2, noseThickness, SLICES, STACKS, LOOPS);
-//	glPopMatrix();
-//	// END Nose Middle
-//
-//	glPopMatrix();
-//	// END Base Head Cylinder
-//}
 
 // ---------------
 // HEAD COMPONENTS
 // ---------------
+
 void DrawHeadBase()
 {
 	float baseRadius = 0.1f;
@@ -1558,8 +1474,8 @@ void DrawUpperHead()
 	float baseHeight = 0.1f;
 
 	glPushMatrix();
-	glScalef(1.12f, 1.0f, 1.22f);
-	glTranslatef(0.0f, baseHeight / 3, 0.0f);
+	glScalef(1.1f, 1.0f, 1.2f);
+	glTranslatef(0.0f, baseHeight * 0.5f, 0.0f);
 	DrawSphere(quadric, baseRadius, SLICES, STACKS);
 	glPopMatrix();
 }
@@ -1569,7 +1485,7 @@ void DrawLowerHead()
 	float baseHeight = 0.1f;
 
 	glPushMatrix();
-	glScalef(1.11f, 0.6f, 1.21f);
+	glScalef(1.1f, 0.6f, 1.2f);
 	glTranslatef(0.0f, -baseHeight * 0.8f, 0.0f);
 	DrawSphere(quadric, baseRadius, SLICES, STACKS);
 	glPopMatrix();
@@ -1652,10 +1568,77 @@ void DrawLeftEyelash()
 void DrawRightEyelash()
 {
 	glPushMatrix();
-	// Mirror across X axis
 	glScalef(-1.0f, 1.0f, 1.0f);
 	DrawEyelash();
 	glPopMatrix();
+}
+
+
+void DrawLip(float length)
+{
+	float lipLength = length / 3;
+	float lipRadius = 0.003f;
+
+	// Middle Lip
+	glPushMatrix();
+	glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
+	DrawEnclosedCylinder(quadric, lipRadius, lipRadius, lipLength, SLICES, STACKS);
+
+	// Left Lip
+	glPushMatrix();
+	glTranslatef(-lipRadius * 0.85f, lipLength * 0.95f, 0.0f);
+	glRotatef(12.0f, 0.0f, 0.0f, 1.0f);
+	glRotatef(80.0f, 0.0f, 1.0f, 0.0f);
+	DrawEnclosedCylinder(quadric, lipRadius, lipRadius * 0.1f, lipLength, SLICES, STACKS);
+	glPopMatrix();
+	// END Left Lip
+
+	// Right Lip
+	glPushMatrix();
+	glTranslatef(-lipRadius * 0.85f, -lipLength * 0.95f, 0.0f);
+	glRotatef(-12.0f, 0.0f, 0.0f, 1.0f);
+	glRotatef(-80.0f, 0.0f, 1.0f, 0.0f);
+	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
+	DrawEnclosedCylinder(quadric, lipRadius, lipRadius * 0.1f, lipLength, SLICES, STACKS);
+	glPopMatrix();
+	// END Right Lip
+
+	glPopMatrix();
+	// END Middle Lip
+}
+void DrawMouth()
+{
+	float baseRadius = 0.1f;
+	float lipLength = baseRadius * 0.75f;
+
+	// Upper Lip
+	glPushMatrix();
+	glTranslatef(0.0f, -baseRadius * 0.3f, baseRadius * 1.2f);
+	DrawLip(lipLength);
+
+	// Lower Lip
+	glPushMatrix();
+	glTranslatef(0.0f, -baseRadius * 0.1f, 0.0f);
+	glScalef(1.0f, -1.0f, 1.0f);
+	DrawLip(lipLength);
+	glPopMatrix();
+	// END Lower Lip
+
+	glPopMatrix();
+	// END Upper Lip
+
+
+	//float baseRadius = 0.1f;
+	//float mouthWidth = baseRadius * 0.5f;
+	//float mouthHeight = baseRadius * 0.1f;
+
+	//glPushMatrix();
+	//glTranslatef(0.0f, -baseRadius * 0.2f, baseRadius * 1.1f);
+	//glTranslatef(0.0f, 0.0f, 0.2f);
+	//glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
+	//glScalef(mouthWidth, mouthHeight, 0.5f);
+	//DrawSemiCylinder(quadric, 0.02f, 0.02f, 1.0f, SLICES, STACKS);
+	//glPopMatrix();
 }
 
 void DrawEar(float side)
@@ -1736,7 +1719,27 @@ void DrawNose()
 	DrawNoseMiddle();
 }
 
+// ----------------
+// TORSO COMPONENTS
+// ----------------
 
+
+
+// --------------
+// ARM COMPONENTS
+// --------------
+
+
+
+// --------------
+// LEG COMPONENTS
+// --------------
+
+
+
+// ========================
+// CHARACTER PARTS ASSEMBLY
+// ========================
 
 void DrawHead()
 {
@@ -1759,7 +1762,7 @@ void DrawHead()
 	// END Eyelashes
 
 	// Mouth
-	
+	DrawMouth();
 	// END Mouth
 
 	// Ears
@@ -1773,6 +1776,26 @@ void DrawHead()
 
 	glPopMatrix();
 }
+
+void DrawTorso()
+{
+
+}
+
+void DrawArm()
+{
+
+}
+
+void DrawLeg()
+{
+
+}
+
+
+// ==============
+// MODEL ASSEMBLY
+// ==============
 
 void DrawCharacter()
 {
