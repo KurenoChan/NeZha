@@ -20,4 +20,3 @@ Release/
 
 # Assets (keep folder, ignore contents)
 Assets/*
-!Assets/.gitkeep
