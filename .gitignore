@@ -18,5 +18,5 @@ Release/
 *.log
 *.db
 
-# Assets (keep folder, ignore contents)
+# Assets
 Assets/*
