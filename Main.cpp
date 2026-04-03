@@ -1453,90 +1453,325 @@ void DrawLightIndicator()
 // ***********************
 // CHARACTER FUNCTIONS
 // ***********************
-void DrawHead()
+//void DrawHead()
+//{
+//	float baseRadius = 0.1f;
+//	float baseHeight = 0.1f;
+//
+//	// Base Head Cylinder
+//	glPushMatrix();
+//	glScalef(1.1f, 1.0f, 1.2f);
+//	DrawEnclosedCylinder(quadric, baseRadius, baseRadius, baseHeight, SLICES, STACKS);
+//
+//	// Upper Head Sphere
+//	glPushMatrix();
+//	glScalef(1.02f, 1.0f, 1.02f);
+//	glTranslatef(0.0f, baseHeight / 3, 0.0f);
+//	DrawSphere(quadric, baseRadius, SLICES, STACKS);
+//	glPopMatrix();
+//	// END Upper Head Sphere
+//
+//	// Lower Head Sphere
+//	glPushMatrix();
+//	glScalef(1.01f, 0.6f, 1.01f);
+//	glTranslatef(0.0f, -baseHeight * 0.8f, 0.0f);
+//	DrawSphere(quadric, baseRadius, SLICES, STACKS);
+//	glPopMatrix();
+//	// END Lower Head Sphere
+//
+//
+//	float earSphereRadius = baseRadius * 0.3f;
+//
+//	// Left Ear
+//	glPushMatrix();
+//	glTranslatef(-baseRadius * 1.1f, -earSphereRadius * 0.5f, 0.0f);
+//	glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
+//	glRotatef(20.0f, 0.0f, 0.0f, 1.0f);
+//	glScalef(0.8f, 1.2f, 0.5f);
+//	DrawSphere(quadric, earSphereRadius, SLICES, STACKS);
+//	glPopMatrix();
+//	// END Left Ear
+//
+//	// Right Ear
+//	glPushMatrix();
+//	glTranslatef(baseRadius * 1.1f, -earSphereRadius * 0.5f, 0.0f);
+//	glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
+//	glRotatef(-20.0f, 0.0f, 0.0f, 1.0f);
+//	glScalef(0.8f, 1.2f, 0.5f);
+//	DrawSphere(quadric, earSphereRadius, SLICES, STACKS);
+//	glPopMatrix();
+//	// END Right Ear
+//
+//
+//	// Left Nose
+//	float noseBaseRadius = baseRadius * 0.05f;
+//	float noseBaseHeight = baseHeight * 0.15f;
+//	float noseThickness = 0.7f;
+//	glPushMatrix();
+//	glTranslatef(-noseBaseRadius * 0.5f, 0.0f, baseRadius * 0.99f);
+//	glRotatef(-15.0f, 0.0f, 0.0f, 1.0f);
+//	glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
+//	glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
+//	DrawEnclosedSemiCylinderWithThickness(quadric, noseBaseRadius, noseBaseRadius * 0.5f, noseBaseHeight, noseThickness, SLICES, STACKS, LOOPS);
+//	glPopMatrix();
+//	// END Left Nose
+//
+//	// Right Nose
+//	glPushMatrix();
+//	glTranslatef(noseBaseRadius * 0.5f, 0.0f, baseRadius * 0.99f);
+//	glRotatef(15.0f, 0.0f, 0.0f, 1.0f);
+//	glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
+//	glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
+//	DrawEnclosedSemiCylinderWithThickness(quadric, noseBaseRadius, noseBaseRadius * 0.5f, noseBaseHeight, noseThickness, SLICES, STACKS, LOOPS);
+//	glPopMatrix();
+//	// END Right Nose
+//
+//	// Nose Middle
+//	glPushMatrix();
+//	glTranslatef(0.0f, noseBaseHeight * 0.5f, baseRadius * 0.99f);
+//	glRotatef(0.0f, 1.0f, 0.0f, 0.0f);
+//	glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
+//	DrawEnclosedSemiCylinderWithThickness(quadric, noseBaseRadius * 2.0f, noseBaseRadius * 0.2f * 1.1f, noseBaseHeight * 2, noseThickness, SLICES, STACKS, LOOPS);
+//	glPopMatrix();
+//	// END Nose Middle
+//
+//	glPopMatrix();
+//	// END Base Head Cylinder
+//}
+
+// ---------------
+// HEAD COMPONENTS
+// ---------------
+void DrawHeadBase()
 {
 	float baseRadius = 0.1f;
 	float baseHeight = 0.1f;
 
-	// Base Head Cylinder
 	glPushMatrix();
 	glScalef(1.1f, 1.0f, 1.2f);
 	DrawEnclosedCylinder(quadric, baseRadius, baseRadius, baseHeight, SLICES, STACKS);
+	glPopMatrix();
+}
+void DrawUpperHead()
+{
+	float baseRadius = 0.1f;
+	float baseHeight = 0.1f;
 
-	// Upper Head Sphere
 	glPushMatrix();
-	glScalef(1.02f, 1.0f, 1.02f);
+	glScalef(1.12f, 1.0f, 1.22f);
 	glTranslatef(0.0f, baseHeight / 3, 0.0f);
 	DrawSphere(quadric, baseRadius, SLICES, STACKS);
 	glPopMatrix();
-	// END Upper Head Sphere
+}
+void DrawLowerHead()
+{
+	float baseRadius = 0.1f;
+	float baseHeight = 0.1f;
 
-	// Lower Head Sphere
 	glPushMatrix();
-	glScalef(1.01f, 0.6f, 1.01f);
+	glScalef(1.11f, 0.6f, 1.21f);
 	glTranslatef(0.0f, -baseHeight * 0.8f, 0.0f);
 	DrawSphere(quadric, baseRadius, SLICES, STACKS);
 	glPopMatrix();
-	// END Lower Head Sphere
+}
 
+void DrawEyeSclera(float side)
+{
+	float scleraRadius = 0.03f;
+	glPushMatrix();
+	glTranslatef(side * scleraRadius / 2, 0.0f, scleraRadius * 0.2f);
+	glRotatef(side * 50.0f, 0.0f, 1.0f, 0.0f);
+	glScalef(1.0f, 0.8f, 0.5f);
+	DrawSphere(quadric, scleraRadius, SLICES, STACKS);
+	glPopMatrix();
+}
+void DrawEyePupil(float side)
+{
+	float scleraRadius = 0.03f;
+	float pupilRadius = 0.007f;
+	glPushMatrix();
+	glTranslatef(side * scleraRadius / 2, 0.0f, (scleraRadius * 0.6f + pupilRadius));
+	glRotatef(side * 35.0f, 0.0f, 1.0f, 0.0f);
+	glScalef(1.0f, 1.0f, 0.2f);
+	DrawSphere(quadric, pupilRadius, SLICES, STACKS);
+	glPopMatrix();
+}
+void DrawEye(float side)
+{
+	float baseRadius = 0.1f;
 
+	glPushMatrix();
+	glTranslatef(side * 0.035f, baseRadius * 0.15f, baseRadius * 0.88f);
+	DrawEyeSclera(side);
+	DrawEyePupil(side);
+	glPopMatrix();
+}
+void DrawLeftEye() { DrawEye(-1.0f); }
+void DrawRightEye() { DrawEye(1.0f); }
+
+void DrawEyelash()
+{
+	float baseRadius = 0.1f;
+	float eyelashLength = 0.02f;
+	float eyelashThickness = 0.002f;
+
+	// Middle Eyelash
+	glPushMatrix();
+	glTranslatef(-0.048f, baseRadius * 0.4f, baseRadius * 1.1f);
+	glRotatef(-30.0f, 0.0f, 1.0f, 0.0f);
+	glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+	glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+	DrawEnclosedCylinder(quadric, eyelashThickness, eyelashThickness, eyelashLength, SLICES, STACKS);
+
+	// Left Eyelash
+	glPushMatrix();
+	glTranslatef(0.0f, -0.015f, 0.0015f);
+	glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
+	DrawEnclosedCylinder(quadric, eyelashThickness, eyelashThickness, eyelashLength, SLICES, STACKS);
+	glPopMatrix();
+	// END Left Eyelash
+
+	// Right Eyelash
+	glPushMatrix();
+	glTranslatef(0.0f, 0.015f, 0.0015f);
+	glRotatef(10.0f, 1.0f, 0.0f, 0.0f);
+	DrawEnclosedCylinder(quadric, eyelashThickness, eyelashThickness, eyelashLength, SLICES, STACKS);
+	glPopMatrix();
+	// END Right Eyelash
+
+	glPopMatrix();
+	// END Middle Eyelash
+}
+
+void DrawLeftEyelash()
+{
+	glPushMatrix();
+	DrawEyelash();
+	glPopMatrix();
+}
+void DrawRightEyelash()
+{
+	glPushMatrix();
+	// Mirror across X axis
+	glScalef(-1.0f, 1.0f, 1.0f);
+	DrawEyelash();
+	glPopMatrix();
+}
+
+void DrawEar(float side)
+{
+	float baseRadius = 0.1f;
 	float earSphereRadius = baseRadius * 0.3f;
 
-	// Left Ear
 	glPushMatrix();
-	glTranslatef(-baseRadius * 1.1f, -earSphereRadius * 0.5f, 0.0f);
+
+	glTranslatef(baseRadius * 1.2f * side, -earSphereRadius * 0.5f, 0.0f);
 	glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
-	glRotatef(20.0f, 0.0f, 0.0f, 1.0f);
+	glRotatef(-20.0f * side, 0.0f, 0.0f, 1.0f);
+
 	glScalef(0.8f, 1.2f, 0.5f);
 	DrawSphere(quadric, earSphereRadius, SLICES, STACKS);
+
 	glPopMatrix();
-	// END Left Ear
+}
+void DrawLeftEar() { DrawEar(-1.0f); }
+void DrawRightEar() { DrawEar(1.0f); }
 
-	// Right Ear
-	glPushMatrix();
-	glTranslatef(baseRadius * 1.1f, -earSphereRadius * 0.5f, 0.0f);
-	glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
-	glRotatef(-20.0f, 0.0f, 0.0f, 1.0f);
-	glScalef(0.8f, 1.2f, 0.5f);
-	DrawSphere(quadric, earSphereRadius, SLICES, STACKS);
-	glPopMatrix();
-	// END Right Ear
+void DrawNoseSide(float side)
+{
+	float baseRadius = 0.1f;
+	float baseHeight = 0.1f;
 
-
-	// Left Nose
 	float noseBaseRadius = baseRadius * 0.05f;
 	float noseBaseHeight = baseHeight * 0.15f;
 	float noseThickness = 0.7f;
+
 	glPushMatrix();
-	glTranslatef(-noseBaseRadius * 0.5f, 0.0f, baseRadius * 0.99f);
-	glRotatef(-15.0f, 0.0f, 0.0f, 1.0f);
+
+	glTranslatef(noseBaseRadius * 0.5f * side, 0.0f, baseRadius * 1.2f);
+	glRotatef(15.0f * side, 0.0f, 0.0f, 1.0f);
 	glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
 	glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
-	DrawEnclosedSemiCylinderWithThickness(quadric, noseBaseRadius, noseBaseRadius * 0.5f, noseBaseHeight, noseThickness, SLICES, STACKS, LOOPS);
-	glPopMatrix();
-	// END Left Nose
 
-	// Right Nose
+	DrawEnclosedSemiCylinderWithThickness(
+		quadric,
+		noseBaseRadius,
+		noseBaseRadius * 0.5f,
+		noseBaseHeight,
+		noseThickness,
+		SLICES, STACKS, LOOPS
+	);
+
+	glPopMatrix();
+}
+void DrawNoseMiddle()
+{
+	float baseRadius = 0.1f;
+	float baseHeight = 0.1f;
+
+	float noseBaseRadius = baseRadius * 0.05f;
+	float noseBaseHeight = baseHeight * 0.1f;
+	float noseThickness = 0.7f;
+
 	glPushMatrix();
-	glTranslatef(noseBaseRadius * 0.5f, 0.0f, baseRadius * 0.99f);
-	glRotatef(15.0f, 0.0f, 0.0f, 1.0f);
-	glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
-	glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
-	DrawEnclosedSemiCylinderWithThickness(quadric, noseBaseRadius, noseBaseRadius * 0.5f, noseBaseHeight, noseThickness, SLICES, STACKS, LOOPS);
-	glPopMatrix();
-	// END Right Nose
 
-	// Nose Middle
+	glTranslatef(0.0f, noseBaseHeight * 0.3f, baseRadius * 1.2f);
+	glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
+
+	DrawEnclosedSemiCylinderWithThickness(
+		quadric,
+		noseBaseRadius * 2.0f,
+		noseBaseRadius * 0.22f,
+		noseBaseHeight * 2.0f,
+		noseThickness,
+		SLICES, STACKS, LOOPS
+	);
+
+	glPopMatrix();
+}
+void DrawNose()
+{
+	DrawNoseSide(-1.0f);
+	DrawNoseSide(1.0f);
+	DrawNoseMiddle();
+}
+
+
+
+void DrawHead()
+{
 	glPushMatrix();
-	glTranslatef(0.0f, noseBaseHeight * 0.5f, baseRadius * 0.99f);
-	glRotatef(0.0f, 1.0f, 0.0f, 0.0f);
-	glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
-	DrawEnclosedSemiCylinderWithThickness(quadric, noseBaseRadius * 2.0f, noseBaseRadius * 0.2f * 1.1f, noseBaseHeight * 2, noseThickness, SLICES, STACKS, LOOPS);
-	glPopMatrix();
-	// END Nose Middle
+
+	// Head
+	DrawHeadBase();
+	DrawUpperHead();
+	DrawLowerHead();
+	// END Head
+
+	// Eyes
+	DrawLeftEye();
+	DrawRightEye();
+	// END Eyes
+
+	// Eyelashes
+	DrawLeftEyelash();
+	DrawRightEyelash();
+	// END Eyelashes
+
+	// Mouth
+	
+	// END Mouth
+
+	// Ears
+	DrawLeftEar();
+	DrawRightEar();
+	// END Ears
+
+	// Nose
+	DrawNose();
+	// END Nose
 
 	glPopMatrix();
-	// END Base Head Cylinder
 }
 
 void DrawCharacter()
@@ -1629,6 +1864,8 @@ void Display()
 	DrawLightIndicator();
 
 	// NeZha
+	//glEnable(GL_TEXTURE_2D);
+
 	float characterOffSetZ = -0.5f;
 	float characterSize = 1.0f;
 	glPushMatrix();
@@ -1636,6 +1873,8 @@ void Display()
 	DrawCharacter();
 	glPopMatrix();
 	// END NeZha
+
+	//glDisable(GL_TEXTURE_2D);
 
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
@@ -1672,7 +1911,7 @@ int WINAPI WinMain(
 	//{
 	//	// do something (e.g. privilege)
 	//}
-	
+
 	// WNDCLASSEX = Windows Class Extended (Data Structure) (We'll specify what we need)
 	WNDCLASSEX wc;	// data structure to store how you want the class to be
 	ZeroMemory(&wc, sizeof(WNDCLASSEX)); // To fill up the memory with zeros based on the size of WNDCLASSEX to &wc
