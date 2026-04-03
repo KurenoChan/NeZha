@@ -49,6 +49,7 @@ The application demonstrates core graphics programming concepts using **C++ and 
 ---
 
 ## Project Structure
+```
 NeZha/
 │
 ├── Main.cpp
@@ -56,7 +57,7 @@ NeZha/
 ├── NeZha.vcxproj
 ├── Assets/ ← (NOT included in repo)
 └── README.md
-
+```
 ---
 
 ## ⚠️ Assets Setup (IMPORTANT)
@@ -72,13 +73,14 @@ https://drive.google.com/drive/folders/1Bq0s4iyMsdx_GKPOkWPj5xPBYJk9tpkS?usp=dri
    (same level as `NeZha.sln`)
 
 Correct structure:
-
+```
 NeZha/
 ├── Assets/
 │ ├── Environment/
 │ ├── Character/
 │ └── ...
 ├── NeZha.sln
+```
 
 > If the folder structure is incorrect, textures will fail to load.
 
