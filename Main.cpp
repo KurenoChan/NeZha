@@ -1470,11 +1470,8 @@ void DrawLightIndicator()
 // HEAD COMPONENTS
 // ---------------
 
-void DrawHeadBase()
+void DrawHeadBase(float baseRadius, float baseHeight)
 {
-	float baseRadius = 0.1f;
-	float baseHeight = 0.1f;
-
 	glPushMatrix();
 	glScalef(1.1f, 1.0f, 1.2f);
 	DrawEnclosedCylinder(quadric, baseRadius, baseRadius, baseHeight, SLICES, STACKS);
@@ -1622,34 +1619,20 @@ void DrawMouth()
 	float baseRadius = 0.1f;
 	float lipLength = baseRadius * 0.75f;
 
-	// Upper Lip
-	glPushMatrix();
-	glTranslatef(0.0f, -baseRadius * 0.3f, baseRadius * 1.2f);
-	DrawLip(lipLength);
+	//// Upper Lip
+	//glPushMatrix();
+	//glTranslatef(0.0f, -baseRadius * 0.3f, baseRadius * 1.2f);
+	//DrawLip(lipLength);
+	//glPopMatrix();
+	//// END Upper Lip
 
 	// Lower Lip
 	glPushMatrix();
-	glTranslatef(0.0f, -baseRadius * 0.1f, 0.0f);
+	glTranslatef(0.0f, -baseRadius * 0.4f, baseRadius * 1.2f);
 	glScalef(1.0f, -1.0f, 1.0f);
 	DrawLip(lipLength);
 	glPopMatrix();
 	// END Lower Lip
-
-	glPopMatrix();
-	// END Upper Lip
-
-
-	//float baseRadius = 0.1f;
-	//float mouthWidth = baseRadius * 0.5f;
-	//float mouthHeight = baseRadius * 0.1f;
-
-	//glPushMatrix();
-	//glTranslatef(0.0f, -baseRadius * 0.2f, baseRadius * 1.1f);
-	//glTranslatef(0.0f, 0.0f, 0.2f);
-	//glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
-	//glScalef(mouthWidth, mouthHeight, 0.5f);
-	//DrawSemiCylinder(quadric, 0.02f, 0.02f, 1.0f, SLICES, STACKS);
-	//glPopMatrix();
 }
 
 void DrawEar(float side)
@@ -2103,11 +2086,11 @@ void DrawLeg(float side)
 // CHARACTER PARTS ASSEMBLY
 // ========================
 
-void DrawHead()
+void DrawHead(float headBaseRadius, float headBaseHeight)
 {
 	// Head
 	glPushMatrix();
-	DrawHeadBase();
+	DrawHeadBase(headBaseRadius, headBaseHeight);
 	DrawUpperHead();
 	DrawLowerHead();
 
@@ -2222,6 +2205,101 @@ void DrawLegs()
 	// END Right Leg
 }
 
+// ***********************
+// HAIR FUNCTIONS
+// ***********************
+
+void DrawHair(float headBaseRadius)
+{
+	float hairRadius = headBaseRadius * 1.2f;
+
+	// Hair Scalp
+	glPushMatrix();
+	glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
+	glScalef(0.8f, 1.0f, 1.2f);
+	DrawSemiSphere(quadric, hairRadius, SLICES, STACKS);
+
+	float sideHairTopRadius = hairRadius * 0.6f;
+
+	// Side Hair [LEFT]
+	glPushMatrix();
+	glTranslatef(0.0f, headBaseRadius * 0.47f, 0.0f);
+	glScalef(1.3f, 1.0f, 1.1f);
+	glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
+	DrawSemiSphere(quadric, sideHairTopRadius, SLICES, STACKS);
+	glPopMatrix();
+	// END Side Hair [LEFT]
+
+	// Side Hair [RIGHT]
+	glPushMatrix();
+	glTranslatef(0.0f, -headBaseRadius * 0.47f, 0.0f);
+	glScalef(1.3f, 1.0f, 1.1f);
+	glRotatef(-90.0f, 0.0f, 0.0f, 1.0f);
+	DrawSemiSphere(quadric, sideHairTopRadius, SLICES, STACKS);
+	glPopMatrix();
+	// END Side Hair [RIGHT]
+
+	// Back Hair [TOP]
+	float topBackHairRadius = hairRadius * 0.9f;
+	glPushMatrix();
+	glTranslatef(-topBackHairRadius * 0.5f, 0.0f, -hairRadius * 0.2f);
+	glRotatef(80.0f, 0.0f, 1.0f, 0.0f);
+	DrawSemiSphere(quadric, topBackHairRadius, SLICES, STACKS);
+	glPopMatrix();
+	// END Back Hair [TOP]
+
+	// Back Hair [BOTTOM]
+	float bottomBackHairRadius = hairRadius * 0.9f;
+	glPushMatrix();
+	glTranslatef(-bottomBackHairRadius * 1.2f, 0.0f, -hairRadius * 0.22f);
+	glRotatef(93.0f, 0.0f, 1.0f, 0.0f);
+	glScalef(1.0f, 1.1f, 1.1f);
+	DrawSemiSphere(quadric, bottomBackHairRadius, SLICES, STACKS);
+	glPopMatrix();
+	// END Back Hair [BOTTOM]
+
+	float bangRadius = hairRadius * 0.28f;
+
+	//glScalef(1.5f, 1.0f, 1.2f);
+	glScalef(1.3f, 1.0f, 1.2f);
+
+	// Left Bun
+	glPushMatrix();
+	glTranslatef(hairRadius * 0.6f, hairRadius * 0.8f, 0.0f);
+	DrawSphere(quadric, bangRadius, SLICES, STACKS);
+	glPopMatrix();
+	// END Left Bun
+
+	// Right Bun
+	glPushMatrix();
+	glTranslatef(hairRadius * 0.6f, -hairRadius * 0.8f, 0.0f);
+	DrawSphere(quadric, bangRadius, SLICES, STACKS);
+	glPopMatrix();
+	// END Right Bun
+
+	glPopMatrix();
+	// END Hair Scalp
+}
+
+// ***********************
+// PROPS FUNCTIONS
+// ***********************
+
+
+
+// ***********************
+// COSTUME FUNCTIONS
+// ***********************
+
+
+
+// ***********************
+// PROPS FUNCTIONS
+// ***********************
+
+
+
+// ----------------------------------------------------
 
 // ==============
 // MODEL ASSEMBLY
@@ -2241,9 +2319,19 @@ void DrawCharacter()
 	DrawNeck(neckHeight);
 
 	// Head
+	float headBaseRadius = 0.1f;
+	float headBaseHeight = 0.1f;
 	glPushMatrix();
 	glTranslatef(0.0f, 0.12f, 0.0f);
-	DrawHead();
+	DrawHead(headBaseRadius, headBaseHeight);
+
+	// Hair
+	glPushMatrix();
+	glTranslatef(0.0f, headBaseRadius * 0.7f, 0.0f);
+	DrawHair(headBaseRadius);
+	glPopMatrix();
+	// END Hair
+
 	glPopMatrix();
 	// END Head
 
@@ -2270,20 +2358,10 @@ void DrawCharacter()
 	// END Torso
 }
 
-// ***********************
-// COSTUME FUNCTIONS
-// ***********************
-
-
-// ***********************
-// PROPS FUNCTIONS
-// ***********************
-
-
-
 // ------------------
 // ENVIRONMENT SETUP
 // ------------------
+
 void DrawSky(GLUquadricObj* quadric, float radius, int slices, int stacks)
 {
 	glPushMatrix();
@@ -2354,7 +2432,7 @@ void Display()
 	//glEnable(GL_TEXTURE_2D);
 
 	float characterOffSetX = 0.0f;
-	float characterOffSetY = -0.15f;
+	float characterOffSetY = -0.13f;
 	float characterOffSetZ = -1.0f;
 	float characterSize = 1.0f;
 	glPushMatrix();
