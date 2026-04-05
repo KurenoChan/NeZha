@@ -1484,7 +1484,7 @@ void DrawUpperHead()
 
 	glPushMatrix();
 	glScalef(1.1f, 1.0f, 1.2f);
-	glTranslatef(0.0f, baseHeight * 0.5f, 0.0f);
+	glTranslatef(0.0f, baseHeight * 0.1f, 0.0f);
 	DrawSphere(quadric, baseRadius, SLICES, STACKS);
 	glPopMatrix();
 }
@@ -1495,7 +1495,7 @@ void DrawLowerHead()
 
 	glPushMatrix();
 	glScalef(1.1f, 0.6f, 1.2f);
-	glTranslatef(0.0f, -baseHeight * 0.8f, 0.0f);
+	glTranslatef(0.0f, -baseHeight * 0.4f, 0.0f);
 	DrawSphere(quadric, baseRadius, SLICES, STACKS);
 	glPopMatrix();
 }
@@ -2136,7 +2136,6 @@ void DrawNeck(float neckHeight)
 	float neckRadius = 0.02f;
 
 	glPushMatrix();
-	//glTranslatef(0.0f, -neckHeight / 2, 0.0f);
 	DrawEnclosedCylinder(quadric, neckRadius, neckRadius, neckHeight, SLICES, STACKS);
 	glPopMatrix();
 }
@@ -2216,7 +2215,7 @@ void DrawHair(float headBaseRadius)
 	// Hair Scalp
 	glPushMatrix();
 	glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
-	glScalef(0.8f, 1.0f, 1.2f);
+	glScalef(0.8f, 1.0f, 1.025f);
 	DrawSemiSphere(quadric, hairRadius, SLICES, STACKS);
 
 	float sideHairTopRadius = hairRadius * 0.6f;
@@ -2253,7 +2252,7 @@ void DrawHair(float headBaseRadius)
 	glPushMatrix();
 	glTranslatef(-bottomBackHairRadius * 1.2f, 0.0f, -hairRadius * 0.22f);
 	glRotatef(93.0f, 0.0f, 1.0f, 0.0f);
-	glScalef(1.0f, 1.1f, 1.1f);
+	glScalef(1.0f, 1.0f, 1.5f);
 	DrawSemiSphere(quadric, bottomBackHairRadius, SLICES, STACKS);
 	glPopMatrix();
 	// END Back Hair [BOTTOM]
@@ -2282,13 +2281,14 @@ void DrawHair(float headBaseRadius)
 }
 
 // ***********************
-// PROPS FUNCTIONS
-// ***********************
-
-
-
-// ***********************
 // COSTUME FUNCTIONS
+// ***********************
+
+
+
+
+// ***********************
+// PROPS FUNCTIONS
 // ***********************
 
 
@@ -2320,14 +2320,14 @@ void DrawCharacter()
 
 	// Head
 	float headBaseRadius = 0.1f;
-	float headBaseHeight = 0.1f;
+	float headBaseHeight = 0.05f;
 	glPushMatrix();
-	glTranslatef(0.0f, 0.12f, 0.0f);
+	glTranslatef(0.0f, neckHeight + headBaseHeight * 0.8f, 0.0f);
 	DrawHead(headBaseRadius, headBaseHeight);
 
 	// Hair
 	glPushMatrix();
-	glTranslatef(0.0f, headBaseRadius * 0.7f, 0.0f);
+	glTranslatef(0.0f, headBaseRadius * 0.5f, 0.0f);
 	DrawHair(headBaseRadius);
 	glPopMatrix();
 	// END Hair
