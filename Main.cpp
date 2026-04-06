@@ -1272,10 +1272,44 @@ void DrawEnclosedCylinder(GLUquadricObj* cylinder, float baseRadius, float topRa
 	// Top Surface
 	glPushMatrix();
 	glTranslatef(0.0f, offsetY, 0.0f);
+	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
 	gluQuadricDrawStyle(quadric, GLU_FILL);
 	DrawFlatCircle(quadric, topRadius, slices, stacks);
 	glPopMatrix();
-	// END Bottom Surface
+	// END Top Surface
+
+	glPopMatrix();
+}
+
+void DrawPartialEnclosedCylinder(GLUquadricObj* cylinder, float baseRadius, float topRadius, float height, float slices, float stacks, boolean isTopClosed, boolean isBottomClosed)
+{
+	glPushMatrix();
+	DrawCylinder(cylinder, baseRadius, topRadius, height, slices, stacks);
+
+	float offsetY = height / 2.0f;
+
+	if (isBottomClosed)
+	{
+		// Bottom Surface
+		glPushMatrix();
+		glTranslatef(0.0f, -offsetY, 0.0f);
+		gluQuadricDrawStyle(quadric, GLU_FILL);
+		DrawFlatCircle(quadric, baseRadius, slices, stacks);
+		glPopMatrix();
+		// END Bottom Surface
+	}
+
+	if (isTopClosed)
+	{
+		// Top Surface
+		glPushMatrix();
+		glTranslatef(0.0f, offsetY, 0.0f);
+		glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
+		gluQuadricDrawStyle(quadric, GLU_FILL);
+		DrawFlatCircle(quadric, topRadius, slices, stacks);
+		glPopMatrix();
+		// END Top Surface
+	}
 
 	glPopMatrix();
 }
@@ -1296,7 +1330,24 @@ void DrawEnclosedSemiCylinder(GLUquadricObj* cylinder, float baseRadius, float t
 	DrawEnclosedCylinder(cylinder, baseRadius, topRadius, height, slices, stacks);
 
 	glDisable(GL_CLIP_PLANE0);
+}
 
+void DrawPartialEnclosedSemiCylinder(GLUquadricObj* cylinder, float baseRadius, float topRadius, float height, float slices, float stacks, boolean isTopClosed, boolean isBottomClosed)
+{
+	float offsetY = height / 2.0f;
+
+	// Define clipping plane (cuts along X axis to keeps one half)
+	GLdouble plane[] = { 1.0, 0.0, 0.0, 0.0 };
+	// Equation: x >= 0 side is kept
+
+	// Enable clipping
+	glEnable(GL_CLIP_PLANE0);
+	glClipPlane(GL_CLIP_PLANE0, plane);
+
+	// Draw full cylinder (but clipped)
+	DrawPartialEnclosedCylinder(cylinder, baseRadius, topRadius, height, slices, stacks, isBottomClosed, isTopClosed);
+
+	glDisable(GL_CLIP_PLANE0);
 }
 
 void DrawEnclosedCylinderWithThickness(GLUquadricObj* cylinder, float baseRadius, float topRadius, float height, float thickness, float slices, float stacks, float loops)
@@ -1320,10 +1371,11 @@ void DrawEnclosedCylinderWithThickness(GLUquadricObj* cylinder, float baseRadius
 	// Top Surface
 	glPushMatrix();
 	glTranslatef(0.0f, offsetY, 0.0f);
+	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
 	gluQuadricDrawStyle(quadric, GLU_FILL);
 	DrawDisk(quadric, innerTopRadius, topRadius, slices, loops);
 	glPopMatrix();
-	// END Bottom Surface
+	// END Top Surface
 
 	glPopMatrix();
 }
@@ -1717,10 +1769,8 @@ void DrawNose()
 // TORSO COMPONENTS
 // ----------------
 
-void DrawTorsoPart(float baseHeight)
+void DrawTorsoPart(float baseRadius, float baseHeight)
 {
-	float baseRadius = 0.06f;
-
 	// Center Base
 	glPushMatrix();
 	glScalef(1.5f, 1.0f, 0.5f);
@@ -1829,7 +1879,7 @@ void DrawHand()
 	glScalef(0.9f, 0.5f, 1.0f);
 	DrawSphere(quadric, baseRadius, SLICES, STACKS);
 	//DrawCuboidPolygon(palmSize, palmSize, palmSize);
-	
+
 	// Reset scale
 	glScalef(1.1f, 1.5f, 1.0f);
 
@@ -2140,12 +2190,12 @@ void DrawNeck(float neckHeight)
 	glPopMatrix();
 }
 
-void DrawTorso(float torsoHeight)
+void DrawTorso(float torsoRadius, float torsoHeight)
 {
 	// Upper Torso
 	glPushMatrix();
 	//glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
-	DrawTorsoPart(torsoHeight);
+	DrawTorsoPart(torsoRadius, torsoHeight);
 	glPopMatrix();
 	// END Upper Torso
 
@@ -2153,7 +2203,7 @@ void DrawTorso(float torsoHeight)
 	glPushMatrix();
 	glTranslatef(0.0f, -torsoHeight, 0.0f);
 	glScalef(1.0f, -1.0f, 1.0f);
-	DrawTorsoPart(torsoHeight);
+	DrawTorsoPart(torsoRadius, torsoHeight);
 	glPopMatrix();
 	// END Lower Torso
 
@@ -2175,7 +2225,7 @@ void DrawArms()
 	// Right Arm
 	glPushMatrix();
 	glTranslatef(torsoOffsetX, 0.0f, 0.0f);
-	glRotatef(-30.0f, 0.0f, 1.0f, 0.0f);
+	glRotatef(30.0f, 0.0f, 1.0f, 0.0f);
 	glRotatef(-80.0f, 0.0f, 0.0f, 1.0f);
 	DrawArm(1.0f);
 	glPopMatrix();
@@ -2284,14 +2334,114 @@ void DrawHair(float headBaseRadius)
 // COSTUME FUNCTIONS
 // ***********************
 
+void DrawRedVest(float torsoRadius, float torsoHeight)
+{
+	float vestRadius = torsoRadius * 1.2f;
+	float vestHeight = torsoRadius * 1.5f;
 
+	// Left Side Vest
+	glPushMatrix();
+	glTranslatef(-torsoRadius * 0.35f, 0.0f, 0.0f);
+	glRotatef(-3.0f, 0.0f, 0.0f, 1.0f);
+	glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
+	glScalef(1.0f, 1.62f, 0.8f);
+	DrawPartialEnclosedSemiCylinder(quadric, vestRadius, vestRadius, vestHeight, SLICES, STACKS, false, true);
+	glPopMatrix();
+	// END Left Side Vest
 
+	// Right Side Vest
+	glPushMatrix();
+	glTranslatef(torsoRadius * 0.35f, 0.0f, 0.0f);
+	glRotatef(3.0f, 0.0f, 0.0f, 1.0f);
+	glScalef(1.0f, 1.62f, 0.8f);
+	DrawPartialEnclosedSemiCylinder(quadric, vestRadius, vestRadius, vestHeight, SLICES, STACKS, false, true);
+	glPopMatrix();
+	// END Right Side Vest
+
+	// Back Side Vest
+	glPushMatrix();
+	glTranslatef(0.0f, 0.0f, -torsoRadius / 2);
+	glScalef(1.0f, 1.62f, 0.9f);
+	DrawCuboidPolygon(torsoRadius, vestHeight, torsoRadius);
+	glPopMatrix();
+	// END Back Side Vest
+}
+
+void DrawPantLeg(float side, float torsoRadius)
+{
+	float legRadius = 0.03f;
+	float legHeight = 0.1f;
+
+	// Pant Leg
+	glPushMatrix();
+	glTranslatef(-(torsoRadius / 2 + legHeight * 0.3f), -side * (torsoRadius * 0.5f + legRadius * 0.35f), 0.0f);
+	glRotatef(-90.0f, 0.0f, 0.0f, 1.0f);
+	DrawCylinder(quadric, legRadius * 0.4f, legRadius, legHeight, SLICES, STACKS);
+
+	// Hem
+	float hemRadius = legHeight * 0.118f;
+	glPushMatrix();
+	glTranslatef(0.0f, -legHeight / 2, 0.0f);
+	DrawSphere(quadric, hemRadius, SLICES, STACKS);
+
+	// Opening
+	float openingRadius = hemRadius * 0.68f;
+	float openingHeight = legHeight * 0.05f;
+	glPushMatrix();
+	glTranslatef(0.0f, -hemRadius, 0.0f);
+	DrawEnclosedCylinder(quadric, openingRadius, openingRadius, openingHeight, SLICES, STACKS);
+	glPopMatrix();
+	// END Opening
+
+	glPopMatrix();
+	// END Hem
+
+	glPopMatrix();
+	// END Pant Leg
+}
+
+void DrawPants(float torsoRadius)
+{
+	float upperPantRadius = 0.03f;
+	float upperPantHeight = torsoRadius * 2.7f;
+	//float upperPantWidth = torsoRadius * 2.5f;
+	//float upperPantHeight = 0.07f;
+	//float upperPantDepth = torsoRadius * 1.3f;
+
+	// Waistband
+	glPushMatrix();
+	glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
+	DrawEnclosedCylinder(quadric, upperPantRadius, upperPantRadius, upperPantHeight, SLICES, STACKS);
+
+	// Pant Leg [LEFT]
+	glPushMatrix();
+	DrawPantLeg(-1.0f, torsoRadius);
+	glPopMatrix();
+	// END Pant Leg [LEFT]
+
+	// Pant Leg [RIGHT]
+	glPushMatrix();
+	DrawPantLeg(1.0f, torsoRadius);
+	glPopMatrix();
+	// END Pant Leg [RIGHT]
+
+	glPopMatrix();
+	// END Waistband
+}
 
 // ***********************
 // PROPS FUNCTIONS
 // ***********************
 
+void DrawHairRibbon()
+{
 
+}
+
+void DrawBelt()
+{
+
+}
 
 // ***********************
 // PROPS FUNCTIONS
@@ -2308,9 +2458,10 @@ void DrawHair(float headBaseRadius)
 void DrawCharacter()
 {
 	// Torso
+	float torsoRadius = 0.06f;
 	float torsoHeight = 0.03f;
 	glPushMatrix();
-	DrawTorso(torsoHeight);
+	DrawTorso(torsoRadius, torsoHeight);
 
 	// Neck
 	float neckHeight = 0.06f;
@@ -2353,6 +2504,18 @@ void DrawCharacter()
 	glPopMatrix();
 	// END Legs
 
+	// Pants
+	glPushMatrix();
+	glTranslatef(0.0f, -torsoHeight * 3, 0.0f);
+	DrawPants(torsoRadius);
+	glPopMatrix();
+	// END Pants
+
+	// Red Vest [COSTUME]
+	glPushMatrix();
+	DrawRedVest(torsoRadius, torsoHeight * 2);
+	glPopMatrix();
+	// END Red Vest [COSTUME]
 
 	glPopMatrix();
 	// END Torso
