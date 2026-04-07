@@ -2204,32 +2204,6 @@ void DrawFoot()
 	glPopMatrix();
 	// END Midfoot
 
-		//// Midfoot [FRONT]
-		//glPushMatrix();
-		//glTranslatef(0.0f, 0.0f, 0.0f);
-		//glRotatef(-180.0f, 0.0f, 1.0f, 0.0f);
-		//DrawEnclosedSemiCylinder(quadric, midfootRadius, midfootRadius * 0.85f, midfootHeight, SLICES, STACKS);
-
-
-		//float offsetX = (midfootRadius + midfootRadius * 0.85f) / 2;
-		//glTranslatef(offsetX, 0.0f, 0.0f);
-		//glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-		//glScalef(0.5f, 1.3f, 0.5f);
-
-		//// Big Toe
-		//glPushMatrix();
-		//glTranslatef(-toeSpacing, 0.0f, -toeSpacing * 0.2f);
-		////glTranslatef(toeSpacing * 2, -midfootHeight * 0.1f, midfootRadius * 1.8);
-		//DrawToe(bigToeLength, true);
-		//glPopMatrix();
-		//// END Big Toe
-
-		//glPopMatrix();
-		//// END Midfoot [FRONT]
-
-		//glPopMatrix();
-		//// END Midfoot [BACK]
-
 	glPopMatrix();
 	// END Ankle
 }
