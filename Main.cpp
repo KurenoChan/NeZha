@@ -2346,6 +2346,15 @@ void DrawRedVest(float torsoRadius, float torsoHeight)
 	glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
 	glScalef(1.0f, 1.62f, 0.8f);
 	DrawPartialEnclosedSemiCylinder(quadric, vestRadius, vestRadius, vestHeight, SLICES, STACKS, false, true);
+
+	// Left Side Top Semi Cylinder
+	float topVestHeight = vestHeight * 0.12f;
+	glPushMatrix();
+	glTranslatef(0.0f, vestHeight / 2 + topVestHeight / 2, 0.0f);
+	DrawEnclosedSemiCylinder(quadric, vestRadius, 0.0f, topVestHeight, SLICES, STACKS);
+	glPopMatrix();
+	// END Left Side Top Semi Cylinder
+
 	glPopMatrix();
 	// END Left Side Vest
 
@@ -2355,6 +2364,14 @@ void DrawRedVest(float torsoRadius, float torsoHeight)
 	glRotatef(3.0f, 0.0f, 0.0f, 1.0f);
 	glScalef(1.0f, 1.62f, 0.8f);
 	DrawPartialEnclosedSemiCylinder(quadric, vestRadius, vestRadius, vestHeight, SLICES, STACKS, false, true);
+
+	// Right Side Top Semi Cylinder
+	glPushMatrix();
+	glTranslatef(0.0f, vestHeight / 2 + topVestHeight / 2, 0.0f);
+	DrawEnclosedSemiCylinder(quadric, vestRadius, 0.0f, topVestHeight, SLICES, STACKS);
+	glPopMatrix();
+	// END Right Side Top Semi Cylinder
+
 	glPopMatrix();
 	// END Right Side Vest
 
@@ -2466,7 +2483,7 @@ void DrawCharacter()
 	// Neck
 	float neckHeight = 0.06f;
 	glPushMatrix();
-	glTranslatef(0.0f, (torsoHeight / 2 + neckHeight), 0.0f);
+	glTranslatef(0.0f, (torsoHeight / 2 + neckHeight * 1.1f), 0.0f);
 	DrawNeck(neckHeight);
 
 	// Head
@@ -2513,7 +2530,7 @@ void DrawCharacter()
 
 	// Red Vest [COSTUME]
 	glPushMatrix();
-	DrawRedVest(torsoRadius, torsoHeight * 2);
+	DrawRedVest(torsoRadius, torsoHeight);
 	glPopMatrix();
 	// END Red Vest [COSTUME]
 
