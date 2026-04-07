@@ -2036,43 +2036,101 @@ void DrawLowerLeg(float legLength)
 	// END Lower Arm Joint
 }
 
-void DrawToe(float length)
+void DrawToe(float length, float joint1Radius, boolean isBigToe)
 {
-	float jointRadius = 0.005f;
+	glScalef(1.0f, 1.0f, 0.8f);
 
-	// Toe Joint
+	// Toe Joint 1
+	//float joint1Radius = 0.0045f;
 	glPushMatrix();
-	DrawSphere(quadric, jointRadius, SLICES, STACKS);
+	DrawSphere(quadric, joint1Radius, SLICES, STACKS);
 
-	// Toe
-	glPushMatrix();
-	glTranslatef(0.0f, 0.0f, length / 2);
 	glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-	DrawEnclosedCylinder(quadric, jointRadius * 0.8f, jointRadius * 0.5f, length, SLICES, STACKS);
 
-	// Toe Tip
+	// Toe 1
+	float toe1Length = length * 0.5f;
 	glPushMatrix();
-	glTranslatef(0.0f, length / 2, 0.0f);
-	DrawSphere(quadric, jointRadius * 0.5f, SLICES, STACKS);
-	glPopMatrix();
-	// END Toe Tip
+	glTranslatef(0.0f, toe1Length / 2, 0.0f);
+	DrawEnclosedCylinder(quadric, joint1Radius * 0.8f, joint1Radius * 0.5f, toe1Length, SLICES, STACKS);
+
+	// Toe Joint 2
+	float joint2Radius = joint1Radius * 0.5f;
+	glPushMatrix();
+	glTranslatef(0.0f, toe1Length / 2, 0.0f);
+	DrawSphere(quadric, joint2Radius, SLICES, STACKS);
+
+	// Toe 2
+	float toe2Length = length * 0.3f;
+	glPushMatrix();
+	glTranslatef(0.0f, toe2Length / 2, 0.0f);
+	DrawEnclosedCylinder(quadric, joint2Radius * 0.8f, joint2Radius * 0.5f, toe2Length, SLICES, STACKS);
+
+	if (!isBigToe)
+	{
+		// Toe Joint 3
+		float joint3Radius = joint2Radius * 0.8f;
+		glPushMatrix();
+		glTranslatef(0.0f, toe2Length / 2, 0.0f);
+		DrawSphere(quadric, joint3Radius, SLICES, STACKS);
+
+		// Toe 3
+		float toe3Length = length / 2;
+		glPushMatrix();
+		glTranslatef(0.0f, joint3Radius + toe3Length / 2, 0.0f);
+		DrawEnclosedCylinder(quadric, joint3Radius * 0.8f, joint3Radius * 0.5f, toe3Length, SLICES, STACKS);
+
+		// Toe Tip
+		glPushMatrix();
+		glTranslatef(0.0f, toe3Length / 2, 0.0f);
+		DrawSphere(quadric, joint3Radius * 0.5f, SLICES, STACKS);
+		glPopMatrix();
+		// END Toe Tip
+
+		glPopMatrix();
+		// END Toe 3
+
+		glPopMatrix();
+		// END Toe Joint 3
+	}
+	else
+	{
+		// Toe Tip
+		glPushMatrix();
+		glTranslatef(0.0f, toe2Length / 2, 0.0f);
+		DrawSphere(quadric, joint2Radius * 0.5f, SLICES, STACKS);
+		glPopMatrix();
+		// END Toe Tip
+	}
+
 
 	glPopMatrix();
-	// END Toe
+	// END Toe 2
 
 	glPopMatrix();
-	// END Toe Joint
+	// END Toe Joint 2
+
+	glPopMatrix();
+	// END Toe 1
+
+	glPopMatrix();
+	// END Toe Joint 1
 }
 
 void DrawFoot()
 {
 	float ankleRadius = 0.01f;
 
-	float bigToeLength = 0.0075f;
+	float bigToeLength = 0.01f;
 	float indexToeLength = 0.015f;
-	float middleToeLength = 0.007f;
-	float ringToeLength = 0.006f;
-	float littleToeLength = 0.005f;
+	float middleToeLength = 0.01f;
+	float ringToeLength = 0.008f;
+	float littleToeLength = 0.007f;
+
+	float bigToeRadius = 0.004f;
+	float indexToeRadius = 0.003f;
+	float middleToeRadius = 0.003f;
+	float ringToeRadius = 0.003f;
+	float littleToeRadius = 0.003f;
 
 	float toeSpacing = 0.01f;
 
@@ -2081,58 +2139,96 @@ void DrawFoot()
 	glScalef(1.0f, 0.7f, 1.2f);
 	DrawSphere(quadric, ankleRadius, SLICES, STACKS);
 
-	// Midfoot [BACK]
-	float midfootRadius = 0.01f;
+	glScalef(1.0f, 1.3f, 0.5f);
+
+	// Midfoot
+	float midfootWidth = 0.1f;
 	float midfootHeight = 0.015f;
+	float midfootDepth = 0.03f;
+	float midfootTopOffset = midfootWidth * 0.1f;
 	glPushMatrix();
-	glTranslatef(0.0f, -ankleRadius, ankleRadius * 1.5f);
-	glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-	glScalef(3.5f, 1.0f, 1.8f);
-	DrawEnclosedSemiCylinder(quadric, midfootRadius, midfootRadius * 0.85f, midfootHeight, SLICES, STACKS);
+	glTranslatef(0.0f, -ankleRadius, ankleRadius + midfootTopOffset * 5);
+	glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
+	DrawRightTrapezoidalPrism(midfootWidth, midfootHeight, midfootDepth, midfootTopOffset);
 
-	// Midfoot [FRONT]
+	// Midfoot [BACK]
+	float midfootBottomRadius = midfootDepth / 2;
+	float midfootTopRadius = midfootTopOffset;
 	glPushMatrix();
-	glTranslatef(0.0f, 0.0f, 0.0f);
+	glTranslatef(-midfootWidth / 2, 0.0f, 0.0f);
 	glRotatef(-180.0f, 0.0f, 1.0f, 0.0f);
-	DrawEnclosedSemiCylinder(quadric, midfootRadius, midfootRadius * 0.85f, midfootHeight, SLICES, STACKS);
+	glScalef(5.5f, 1.0f, 1.5f);
+	DrawEnclosedCylinder(quadric, midfootBottomRadius, midfootTopRadius, midfootHeight, SLICES, STACKS);
 	glPopMatrix();
-	// END Midfoot [FRONT]
+	// END Midfoot [BACK]
 
-	/*
-
-	glScalef(0.5f, 1.0f, 0.5f);
+	float offsetX = (midfootWidth - midfootTopOffset) / 2;
+	glTranslatef(offsetX, -midfootHeight / 4, -toeSpacing * 0.2f);
+	glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+	glScalef(1.0f, 1.0f, 2.0f);
 
 	// Big Toe
 	glPushMatrix();
-	glTranslatef(toeSpacing * 2, -midfootHeight * 0.1f, midfootRadius * 1.8);
-	DrawToe(bigToeLength);
+	glTranslatef(-toeSpacing * 1.2f, 0.0f, 0.0f);
+	DrawToe(bigToeLength, bigToeRadius, true);
 	glPopMatrix();
 	// END Big Toe
 
 	// Index Toe
 	glPushMatrix();
-	glTranslatef(toeSpacing, -midfootHeight * 0.1f, midfootRadius * 1.8);
-	DrawToe(indexToeLength);
+	glTranslatef(-toeSpacing * 0.5f, 0.0f, 0.0f);
+	DrawToe(indexToeLength, indexToeRadius, true);
 	glPopMatrix();
 	// END Index Toe
 
 	// Middle Toe
 	glPushMatrix();
-	glTranslatef(0.0f, -midfootHeight * 0.1f, midfootRadius * 1.8);
-	DrawToe(middleToeLength);
+	DrawToe(middleToeLength, middleToeRadius, true);
 	glPopMatrix();
 	// END Middle Toe
 
 	// Ring Toe
+	glPushMatrix();
+	glTranslatef(toeSpacing * 0.5f, 0.0f, 0.0f);
+	DrawToe(ringToeLength, ringToeRadius, true);
+	glPopMatrix();
 	// END Ring Toe
 
 	// Little Toe
+	glPushMatrix();
+	glTranslatef(toeSpacing, 0.0f, 0.0f);
+	DrawToe(littleToeLength, littleToeRadius, true);
+	glPopMatrix();
 	// END Little Toe
 
-	*/
-
 	glPopMatrix();
-	// END Midfoot [BACK]
+	// END Midfoot
+
+		//// Midfoot [FRONT]
+		//glPushMatrix();
+		//glTranslatef(0.0f, 0.0f, 0.0f);
+		//glRotatef(-180.0f, 0.0f, 1.0f, 0.0f);
+		//DrawEnclosedSemiCylinder(quadric, midfootRadius, midfootRadius * 0.85f, midfootHeight, SLICES, STACKS);
+
+
+		//float offsetX = (midfootRadius + midfootRadius * 0.85f) / 2;
+		//glTranslatef(offsetX, 0.0f, 0.0f);
+		//glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+		//glScalef(0.5f, 1.3f, 0.5f);
+
+		//// Big Toe
+		//glPushMatrix();
+		//glTranslatef(-toeSpacing, 0.0f, -toeSpacing * 0.2f);
+		////glTranslatef(toeSpacing * 2, -midfootHeight * 0.1f, midfootRadius * 1.8);
+		//DrawToe(bigToeLength, true);
+		//glPopMatrix();
+		//// END Big Toe
+
+		//glPopMatrix();
+		//// END Midfoot [FRONT]
+
+		//glPopMatrix();
+		//// END Midfoot [BACK]
 
 	glPopMatrix();
 	// END Ankle
@@ -2142,6 +2238,8 @@ void DrawLeg(float side)
 {
 	float upperLegLength = 0.06f;
 	float lowerLegLength = 0.07f;
+
+	glScalef(side, 1.0f, 1.0f);
 
 	// Upper Leg
 	glPushMatrix();
