@@ -1835,30 +1835,66 @@ void DrawLowerArm(float armLength)
 
 void DrawFinger(float length)
 {
-	float jointRadius = 0.005f;
-
-	// Finger Joint
+	// Finger Joint 1
+	float joint1Radius = 0.005f;
 	glPushMatrix();
-	DrawSphere(quadric, jointRadius, SLICES, STACKS);
+	DrawSphere(quadric, joint1Radius, SLICES, STACKS);
 
-	// Finger
+	// Finger 1
+	float finger1Length = length * 0.5f;
 	glPushMatrix();
-	glTranslatef(0.0f, 0.0f, length / 2);
+	glTranslatef(0.0f, 0.0f, finger1Length / 2);
 	glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-	DrawEnclosedCylinder(quadric, jointRadius * 0.8f, jointRadius * 0.5f, length, SLICES, STACKS);
+	DrawEnclosedCylinder(quadric, joint1Radius * 0.8f, joint1Radius * 0.5f, finger1Length, SLICES, STACKS);
+
+	// Finger Joint 2
+	float joint2Radius = joint1Radius * 0.8f;
+	glPushMatrix();
+	glTranslatef(0.0f, finger1Length / 2, 0.0f);
+	DrawSphere(quadric, joint2Radius, SLICES, STACKS);
+
+	// Finger 2
+	float finger2Length = length / 2;
+	glPushMatrix();
+	glTranslatef(0.0f, finger1Length / 2 + finger2Length / 2, 0.0f);
+	DrawEnclosedCylinder(quadric, joint2Radius * 0.8f, joint2Radius * 0.5f, finger2Length, SLICES, STACKS);
+
+	// Finger Joint 3
+	float joint3Radius = joint2Radius * 0.8f;
+	glPushMatrix();
+	glTranslatef(0.0f, finger2Length / 2, 0.0f);
+	DrawSphere(quadric, joint3Radius, SLICES, STACKS);
+
+	// Finger 3
+	float finger3Length = length / 2;
+	glPushMatrix();
+	glTranslatef(0.0f, finger3Length / 2, 0.0f);
+	DrawEnclosedCylinder(quadric, joint3Radius * 0.8f, joint3Radius * 0.5f, finger3Length, SLICES, STACKS);
 
 	// Finger Tip
 	glPushMatrix();
-	glTranslatef(0.0f, length / 2, 0.0f);
-	DrawSphere(quadric, jointRadius * 0.5f, SLICES, STACKS);
+	glTranslatef(0.0f, finger3Length / 2, 0.0f);
+	DrawSphere(quadric, joint3Radius * 0.5f, SLICES, STACKS);
 	glPopMatrix();
 	// END Finger Tip
 
 	glPopMatrix();
-	// END Finger
+	// END Finger 3
 
 	glPopMatrix();
-	// END Finger Joint
+	// END Finger Joint 3
+
+	glPopMatrix();
+	// END Finger 2
+
+	glPopMatrix();
+	// END Finger Joint 2
+
+	glPopMatrix();
+	// END Finger 1
+
+	glPopMatrix();
+	// END Finger Joint 1
 }
 
 void DrawHand()
@@ -1878,7 +1914,6 @@ void DrawHand()
 	glPushMatrix();
 	glScalef(0.9f, 0.5f, 1.0f);
 	DrawSphere(quadric, baseRadius, SLICES, STACKS);
-	//DrawCuboidPolygon(palmSize, palmSize, palmSize);
 
 	// Reset scale
 	glScalef(1.1f, 1.5f, 1.0f);
@@ -2046,7 +2081,7 @@ void DrawFoot()
 	glScalef(1.0f, 0.7f, 1.2f);
 	DrawSphere(quadric, ankleRadius, SLICES, STACKS);
 
-	// Midfoot [FRONT]
+	// Midfoot [BACK]
 	float midfootRadius = 0.01f;
 	float midfootHeight = 0.015f;
 	glPushMatrix();
@@ -2055,13 +2090,13 @@ void DrawFoot()
 	glScalef(3.5f, 1.0f, 1.8f);
 	DrawEnclosedSemiCylinder(quadric, midfootRadius, midfootRadius * 0.85f, midfootHeight, SLICES, STACKS);
 
-	// Midfoot [BACK]
+	// Midfoot [FRONT]
 	glPushMatrix();
 	glTranslatef(0.0f, 0.0f, 0.0f);
 	glRotatef(-180.0f, 0.0f, 1.0f, 0.0f);
 	DrawEnclosedSemiCylinder(quadric, midfootRadius, midfootRadius * 0.85f, midfootHeight, SLICES, STACKS);
 	glPopMatrix();
-	// END Midfoot [BACK]
+	// END Midfoot [FRONT]
 
 	/*
 
@@ -2097,7 +2132,7 @@ void DrawFoot()
 	*/
 
 	glPopMatrix();
-	// END Midfoot [FRONT]
+	// END Midfoot [BACK]
 
 	glPopMatrix();
 	// END Ankle
@@ -2421,9 +2456,6 @@ void DrawPants(float torsoRadius)
 {
 	float upperPantRadius = 0.03f;
 	float upperPantHeight = torsoRadius * 2.7f;
-	//float upperPantWidth = torsoRadius * 2.5f;
-	//float upperPantHeight = 0.07f;
-	//float upperPantDepth = torsoRadius * 1.3f;
 
 	// Waistband
 	glPushMatrix();
