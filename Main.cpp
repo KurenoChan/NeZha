@@ -1,9 +1,9 @@
 #include <Windows.h>	// using Microsoft Windows library
 #include <gl/GL.h>		// OpenGL Library (To interact directly with to GPU, faster) [Code <-> OpenGL (Abstraction on top of many different GPUs) <-> GPU]
+#include <gl/GLU.h>
 #include <math.h>
 #include <vector>
 #include <cstdlib> // For rand() and srand()
-#include <gl/GLU.h>
 #include <cmath>
 
 #pragma comment (lib, "OpenGL32.lib")
@@ -133,6 +133,8 @@ GLuint seaTexture;
 const int SLICES = 50;
 const int STACKS = 50;
 const int LOOPS = 50;
+
+const float PI = 3.14159265358979f;
 
 // ---------
 const float GLU_ANGLEY_OFFSET = -90.0f;
@@ -2287,10 +2289,8 @@ void DrawHead(float headBaseRadius, float headBaseHeight)
 	// END Head
 }
 
-void DrawNeck(float neckHeight)
+void DrawNeck(float neckRadius, float neckHeight)
 {
-	float neckRadius = 0.02f;
-
 	glPushMatrix();
 	DrawEnclosedCylinder(quadric, neckRadius, neckRadius, neckHeight, SLICES, STACKS);
 	glPopMatrix();
@@ -2415,19 +2415,20 @@ void DrawHair(float headBaseRadius)
 
 	float bangRadius = hairRadius * 0.28f;
 
-	//glScalef(1.5f, 1.0f, 1.2f);
 	glScalef(1.3f, 1.0f, 1.2f);
 
 	// Left Bun
 	glPushMatrix();
-	glTranslatef(hairRadius * 0.6f, hairRadius * 0.8f, 0.0f);
+	glTranslatef(hairRadius * 0.6f, hairRadius, 0.0f);
+	glScalef(1.2f, 1.2f, 1.0f);
 	DrawSphere(quadric, bangRadius, SLICES, STACKS);
 	glPopMatrix();
 	// END Left Bun
 
 	// Right Bun
 	glPushMatrix();
-	glTranslatef(hairRadius * 0.6f, -hairRadius * 0.8f, 0.0f);
+	glTranslatef(hairRadius * 0.6f, -hairRadius, 0.0f);
+	glScalef(1.2f, 1.2f, 1.0f);
 	DrawSphere(quadric, bangRadius, SLICES, STACKS);
 	glPopMatrix();
 	// END Right Bun
@@ -2526,7 +2527,7 @@ void DrawPantLeg(float side, float torsoRadius)
 void DrawPants(float torsoRadius)
 {
 	float upperPantRadius = 0.03f;
-	float upperPantHeight = torsoRadius * 2.7f;
+	float upperPantHeight = torsoRadius * 2.3f;
 
 	// Waistband
 	glPushMatrix();
@@ -2553,14 +2554,141 @@ void DrawPants(float torsoRadius)
 // PROPS FUNCTIONS
 // ***********************
 
-void DrawHairRibbon()
+void DrawNeckRing(float neckRadius)
 {
-
+	float ringRadius = neckRadius * 2.0f;
+	float ringHeight = 0.01f;
+	float thickness = 0.8f;
+	
+	glPushMatrix();
+	glRotatef(5.0f, 1.0f, 0.0f, 0.0f);
+	DrawEnclosedCylinderWithThickness(quadric, ringRadius, ringRadius, ringHeight, thickness, SLICES, STACKS, LOOPS);
+	glPopMatrix();
 }
 
-void DrawBelt()
+void DrawHairRibbon(float headBaseRadius)
 {
+	float ribbonBaseRadius = 0.034f;
+	float ribbonBaseHeight = 0.015f;
 
+	// Center Cylinder
+	glPushMatrix();
+	glTranslatef(-headBaseRadius * 1.0f, -headBaseRadius * 0.45f, 0.0f);
+	glRotatef(48.0f, 0.0f, 0.0f, 1.0f);
+	DrawCylinder(quadric, ribbonBaseRadius, ribbonBaseRadius, ribbonBaseHeight, SLICES, STACKS);
+
+	glRotatef(-100.0f, 0.0f, 1.0f, 0.0f);
+
+	float stripRadius = ribbonBaseRadius * 1.5f;
+	float stripHeight = ribbonBaseHeight;
+
+	// Front Strip
+	glPushMatrix();
+	glTranslatef(0.0f, 0.0f, stripRadius);
+	glScalef(1.0f, 1.0f, 0.8f);
+	DrawSemiCylinder(quadric, stripRadius, stripRadius, stripHeight, SLICES, STACKS);
+	glPopMatrix();
+	// END Front Strip
+
+	// Back Strip
+	glPushMatrix();
+	glTranslatef(0.0f, 0.0f, stripRadius);
+	glScalef(-1.0f, 1.0f, 1.4f);
+	DrawSemiCylinder(quadric, stripRadius, stripRadius, stripHeight, SLICES, STACKS);
+	glPopMatrix();
+	// END Back Strip
+
+	glPopMatrix();
+	// END Center Cylinder
+}
+
+void DrawHairRibbons(float headBaseRadius)
+{
+	// Left Ribbon
+	glPushMatrix();
+	glScalef(1.0f, 1.0f, 1.0f);
+	DrawHairRibbon(headBaseRadius);
+	glPopMatrix();
+	// END Left Ribbon
+
+	// Right Ribbon
+	glPushMatrix();
+	glScalef(-1.0f, 1.0f, 1.0f);
+	DrawHairRibbon(headBaseRadius);
+	glPopMatrix();
+	// END Right Ribbon
+}
+
+void DrawBelt(float torsoRadius)
+{
+	float outerBeltRadius = torsoRadius * 1.2f;
+	float outerBeltHeight = 0.02f;
+	float outerBeltThickness = 0.8f;
+
+	// Center Belt
+	glPushMatrix();
+	glScalef(1.3f, 1.0f, 0.7f);
+	DrawEnclosedCylinderWithThickness(quadric, outerBeltRadius, outerBeltRadius, outerBeltHeight, outerBeltThickness, SLICES, STACKS, LOOPS);
+
+	// Center Front Tie
+	float centerTieRadius = outerBeltRadius * 0.13f;
+	float centerTieHeight = outerBeltRadius * 0.2f;
+	glPushMatrix();
+	glTranslatef(0.0f, 0.0f, outerBeltRadius + centerTieRadius / 2);
+	glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
+	DrawEnclosedCylinder(quadric, centerTieRadius, centerTieRadius, centerTieHeight, SLICES, STACKS);
+
+	// Left Front Tie
+	float leftFrontTieRadius = centerTieRadius * 1.2f;
+	float leftFrontTieHeight = centerTieHeight * 0.7f;
+	float leftFrontTieThickness = 0.3f;
+	glPushMatrix();
+	glTranslatef(-leftFrontTieRadius * 0.8f, leftFrontTieRadius * 1.5f, -centerTieRadius * 0.5f);
+	glRotatef(-30.0f, 0.0f, 0.0f, 1.0f);
+	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+	glScalef(2.0f, 1.0f, 1.2f);
+	DrawEnclosedCylinderWithThickness(quadric, leftFrontTieRadius, leftFrontTieRadius, leftFrontTieHeight, leftFrontTieThickness, SLICES, STACKS, LOOPS);
+	glPopMatrix();
+	// END Left Front Tie
+
+	// Right Front Tie
+	float rightFrontTieRadius = centerTieRadius * 1.5f;
+	float rightFrontTieHeight = centerTieHeight * 0.7f;
+	float rightFrontTieThickness = 0.15f;
+	glPushMatrix();
+	glTranslatef(-rightFrontTieRadius * 1.8f, -rightFrontTieRadius * 1.5f, -centerTieRadius * 0.5f);
+	glRotatef(20.0f, 0.0f, 0.0f, 1.0f);
+	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+	glScalef(3.0f, 1.0f, 1.2f);
+	DrawEnclosedCylinderWithThickness(quadric, rightFrontTieRadius, rightFrontTieRadius, rightFrontTieHeight, rightFrontTieThickness, SLICES, STACKS, LOOPS);
+	glPopMatrix();
+	// END Right Front Tie
+
+	glPopMatrix();
+	// END Center Front Tie
+
+	glScalef(1.0f, 1.0f, 1.5f);
+
+	// Left Back Tie
+	float leftBackTieRadius = torsoRadius * 0.7f;
+	glPushMatrix();
+	glTranslatef(-leftBackTieRadius * 0.7f, -torsoRadius * 0.3f, 0.0f);
+	glRotatef(30.0f, 0.0f, 0.0f, 1.0f);
+	DrawEnclosedCylinderWithThickness(quadric, leftBackTieRadius, leftBackTieRadius, outerBeltHeight, outerBeltThickness, SLICES, STACKS, LOOPS);
+	glPopMatrix();
+	// END Left Back Tie
+
+	// Right Back Tie
+	float rightBackTieRadius = torsoRadius * 0.8f;
+	glPushMatrix();
+	glTranslatef(rightBackTieRadius * 0.7f, -torsoRadius * 0.5f, 0.0f);
+	glRotatef(-45.0f, 0.0f, 0.0f, 1.0f);
+	DrawEnclosedCylinderWithThickness(quadric, leftBackTieRadius, leftBackTieRadius, outerBeltHeight, outerBeltThickness, SLICES, STACKS, LOOPS);
+	glPopMatrix();
+	// END Right Back Tie
+
+	glPopMatrix();
+	// END Center Belt
 }
 
 // ***********************
@@ -2584,10 +2712,18 @@ void DrawCharacter()
 	DrawTorso(torsoRadius, torsoHeight);
 
 	// Neck
-	float neckHeight = 0.06f;
+	float neckRadius = 0.02f;
+	float neckHeight = 0.065f;
 	glPushMatrix();
 	glTranslatef(0.0f, (torsoHeight / 2 + neckHeight * 1.1f), 0.0f);
-	DrawNeck(neckHeight);
+	DrawNeck(neckRadius, neckHeight);
+
+	// Neck Ring
+	glPushMatrix();
+	glTranslatef(0.0f, neckHeight * 0.05f, 0.0f);
+	DrawNeckRing(neckRadius);
+	glPopMatrix();
+	// END Neck Ring
 
 	// Head
 	float headBaseRadius = 0.1f;
@@ -2600,6 +2736,14 @@ void DrawCharacter()
 	glPushMatrix();
 	glTranslatef(0.0f, headBaseRadius * 0.5f, 0.0f);
 	DrawHair(headBaseRadius);
+
+	// Hair Ribbon
+	glPushMatrix();
+	glTranslatef(0.0f, headBaseRadius , 0.0f);
+	DrawHairRibbons(headBaseRadius);
+	glPopMatrix();
+	// END Hair Ribbon
+
 	glPopMatrix();
 	// END Hair
 
@@ -2621,15 +2765,22 @@ void DrawCharacter()
 	glPushMatrix();
 	glTranslatef(0.0f, -torsoHeight * 3, 0.0f);
 	DrawLegs();
-	glPopMatrix();
-	// END Legs
 
 	// Pants
 	glPushMatrix();
-	glTranslatef(0.0f, -torsoHeight * 3, 0.0f);
 	DrawPants(torsoRadius);
 	glPopMatrix();
 	// END Pants
+
+	// Belt
+	glPushMatrix();
+	glTranslatef(0.0f, 0.01f, 0.0f);
+	DrawBelt(torsoRadius);
+	glPopMatrix();
+	// END Belt
+
+	glPopMatrix();
+	// END Legs
 
 	// Red Vest [COSTUME]
 	glPushMatrix();
