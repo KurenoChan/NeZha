@@ -1999,20 +1999,20 @@ void DrawUpperLeg(float legLength)
 {
 	float baseRadius = 0.03f;
 
-	// Upper Arm Joint
+	// Upper Leg Joint
 	glPushMatrix();
 	DrawSphere(quadric, baseRadius, SLICES, STACKS);
 
-	// Upper Arm
+	// Upper Leg
 	glPushMatrix();
 	glTranslatef(0.0f, -legLength / 2, 0.0f);
 	//glRotatef(88.0f, 0.0f, 0.0f, 1.0f);
 	DrawEnclosedCylinder(quadric, baseRadius * 0.45f, baseRadius * 0.8f, legLength, SLICES, STACKS);
 	glPopMatrix();
-	// END Upper Arm
+	// END Upper Leg
 
 	glPopMatrix();
-	// END Upper Arm Joint
+	// END Upper Leg Joint
 
 }
 
@@ -2021,19 +2021,19 @@ void DrawLowerLeg(float legLength)
 	float upperBaseRadius = 0.03f;
 	float baseRadius = 0.02f;
 
-	// Lower Arm Joint
+	// Lower Leg Joint
 	glPushMatrix();
 	DrawSphere(quadric, upperBaseRadius * 0.6f, SLICES, STACKS);
 
-	// Lower Arm
+	// Lower Leg
 	glPushMatrix();
 	glTranslatef(0.0f, -legLength / 2, 0.0f);
 	DrawEnclosedCylinder(quadric, baseRadius * 0.3f, baseRadius * 0.7f, legLength, SLICES, STACKS);
 	glPopMatrix();
-	// END Lower Arm
+	// END Lower Leg
 
 	glPopMatrix();
-	// END Lower Arm Joint
+	// END Lower Leg Joint
 }
 
 void DrawToe(float length, float joint1Radius, boolean isBigToe)
@@ -2041,7 +2041,6 @@ void DrawToe(float length, float joint1Radius, boolean isBigToe)
 	glScalef(1.0f, 1.0f, 0.8f);
 
 	// Toe Joint 1
-	//float joint1Radius = 0.0045f;
 	glPushMatrix();
 	DrawSphere(quadric, joint1Radius, SLICES, STACKS);
 
