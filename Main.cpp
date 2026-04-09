@@ -1401,6 +1401,108 @@ void DrawEnclosedSemiCylinderWithThickness(GLUquadricObj* cylinder, float baseRa
 
 }
 
+void DrawBentCylinder(GLUquadricObj* cylinder, float tubeRadius, float edgeRadius, float arcRadius, float bendAngle, int segments, float slices, float stacks)
+{
+	float step = bendAngle / segments;
+
+	glPushMatrix();
+
+	for (int i = 0; i < segments; i++)
+	{
+		float currentAngle = i * step;
+
+		// Position on arc (XY plane)
+		float x = cos(DegreeToRadian(currentAngle)) * arcRadius;
+		float y = sin(DegreeToRadian(currentAngle)) * arcRadius;
+
+
+		// Move to arc position
+		glPushMatrix();
+		glTranslatef(x, y, 0.0f);
+
+		// Rotate so cylinder follows tangent
+		// Tangent angle = currentAngle + 90
+		glRotatef(currentAngle + 90.0f, 0.0f, 0.0f, 1.0f);
+		glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
+
+		// Draw small cylinder segment
+		if (i == 0)
+		{
+			gluCylinder(cylinder, tubeRadius, edgeRadius, arcRadius * DegreeToRadian(step), slices, stacks);
+		}
+		else if (i == segments - 1)
+		{
+			gluCylinder(cylinder, edgeRadius, tubeRadius, arcRadius * DegreeToRadian(step), slices, stacks);
+		}
+		else
+		{
+			gluCylinder(cylinder, tubeRadius, tubeRadius, arcRadius * DegreeToRadian(step), slices, stacks);
+		}
+
+		glPopMatrix();
+	}
+
+	glPopMatrix();
+}
+
+void DrawEnclosedBentCylinder(GLUquadricObj* cylinder, float tubeRadius, float edgeRadius, float arcRadius, float bendAngle, int segments, float slices, float stacks)
+{
+	float step = bendAngle / segments;
+	float segmentLength = arcRadius * DegreeToRadian(step);
+
+	glPushMatrix();
+
+	for (int i = 0; i < segments; i++)
+	{
+		float currentAngle = i * step;
+
+		float x = cos(DegreeToRadian(currentAngle)) * arcRadius;
+		float y = sin(DegreeToRadian(currentAngle)) * arcRadius;
+
+		// Segmented Cylinder
+		glPushMatrix();
+
+		glTranslatef(x, y, 0.0f);
+
+		glRotatef(currentAngle + 90.0f, 0.0f, 0.0f, 1.0f);
+		glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
+
+		if (i == 0)
+			gluCylinder(cylinder, tubeRadius, edgeRadius, segmentLength, slices, stacks);
+		else if (i == segments - 1)
+			gluCylinder(cylinder, edgeRadius, tubeRadius, segmentLength, slices, stacks);
+		else
+			gluCylinder(cylinder, tubeRadius, tubeRadius, segmentLength, slices, stacks);
+
+		// Start Cap
+		if (i == 0)
+		{
+			glPushMatrix();
+			glTranslatef(0.0f, 0.0f, segmentLength);
+			glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+			gluQuadricDrawStyle(cylinder, GLU_FILL);
+			DrawFlatCircle(cylinder, edgeRadius, slices, stacks);
+			glPopMatrix();
+		}
+		// END Start Cap
+
+		// End Cap
+		if (i == segments - 1)
+		{
+			glPushMatrix();
+			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+			gluQuadricDrawStyle(cylinder, GLU_FILL);
+			DrawFlatCircle(cylinder, edgeRadius, slices, stacks);
+			glPopMatrix();
+		}
+		// END End Cap
+
+		glPopMatrix();
+		// END Segmented Cylinder
+	}
+
+	glPopMatrix();
+}
 
 void DrawSphere(GLUquadricObj* quadric, float radius, int slices, int stacks)
 {
@@ -2359,6 +2461,54 @@ void DrawLegs()
 // HAIR FUNCTIONS
 // ***********************
 
+void DrawHairStripsSide(float hairRadius, int numStrips, float side)
+{
+	float stripTubeRadius = (hairRadius * 1.4f / numStrips) / 2;
+	float stripEdgeRadius = stripTubeRadius * 0.5f;
+	float stripBentAngle = 190.0f;
+	float stripArcRadius = hairRadius * 0.98f;
+	int stripSegments = 50;
+
+	float arcRadiusFactor = 0.987f;
+	float bentAngleFactor = 0.995f;
+
+	glPushMatrix();
+	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
+	glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
+	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+	glScalef(1.0f, 0.999f, 0.9f);
+
+	for (int i = 0; i < numStrips; i++)
+	{
+		DrawEnclosedBentCylinder(quadric, stripTubeRadius, stripEdgeRadius, stripArcRadius, stripBentAngle, stripSegments, SLICES, STACKS);
+
+		stripArcRadius *= arcRadiusFactor;
+		stripBentAngle *= bentAngleFactor;
+
+		glTranslatef(0.0f, 0.0f, side * -stripTubeRadius);
+	}
+
+	glPopMatrix();
+}
+
+void DrawHairStrips(float hairRadius)
+{
+	glTranslatef(0.0f, -hairRadius, 0.0f);
+
+	// Left Hair Strips
+	glPushMatrix();
+	DrawHairStripsSide(hairRadius, 10, -1.0f);
+	glPopMatrix();
+	// END Left Hair Strips
+
+	// Right Hair Strips
+	glPushMatrix();
+	DrawHairStripsSide(hairRadius, 10, 1.0f);
+	glPopMatrix();
+	// END Right Hair Strips
+	
+}
+
 void DrawHair(float headBaseRadius)
 {
 	float hairRadius = headBaseRadius * 1.2f;
@@ -2368,6 +2518,13 @@ void DrawHair(float headBaseRadius)
 	glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
 	glScalef(0.8f, 1.0f, 1.025f);
 	DrawSemiSphere(quadric, hairRadius, SLICES, STACKS);
+
+	// Hair Strips
+	glPushMatrix();
+	glTranslatef(0.0f, hairRadius, 0.0f);
+	DrawHairStrips(hairRadius);
+	glPopMatrix();
+	// END Hair Strips
 
 	float sideHairTopRadius = hairRadius * 0.6f;
 
@@ -2554,7 +2711,7 @@ void DrawNeckRing(float neckRadius)
 	float ringRadius = neckRadius * 2.0f;
 	float ringHeight = 0.01f;
 	float thickness = 0.8f;
-	
+
 	glPushMatrix();
 	glRotatef(5.0f, 1.0f, 0.0f, 0.0f);
 	DrawEnclosedCylinderWithThickness(quadric, ringRadius, ringRadius, ringHeight, thickness, SLICES, STACKS, LOOPS);
@@ -2734,7 +2891,7 @@ void DrawCharacter()
 
 	// Hair Ribbon
 	glPushMatrix();
-	glTranslatef(0.0f, headBaseRadius , 0.0f);
+	glTranslatef(0.0f, headBaseRadius, 0.0f);
 	DrawHairRibbons(headBaseRadius);
 	glPopMatrix();
 	// END Hair Ribbon
@@ -2867,6 +3024,7 @@ void Display()
 	glPushMatrix();
 	glTranslatef(characterOffSetX, characterOffSetY, characterOffSetZ);
 	DrawCharacter();
+	//DrawBentCylinder(quadric, 0.05f, 0.05f, 0.2f, 360.0f, 200, SLICES, STACKS);
 	glPopMatrix();
 	// END NeZha
 
