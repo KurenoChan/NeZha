@@ -108,20 +108,20 @@ GLuint boxTexture;
 GLuint goldTexture;
 GLuint silverTexture;
 
-// ------------------
-// ICE CREAM TEXTURES
-// ------------------
-// Cream Textures
-GLuint matchaIceCreamTexture;
-GLuint chocolateIceCreamTexture;
-GLuint vanillaIceCreamTexture;
-GLuint cookieCreamTexture;
-// Cookies
-GLuint coneTexture;
-GLuint oreoCookieTexture;
-GLuint waffleTexture;
-// Decoration
-GLuint cherryTexture;
+// CHARACTER TEXTURES
+GLuint skinTexture;
+GLuint lipTexture;
+GLuint eyelashTexture;
+GLuint scleraTexture;
+GLuint pupilTexture;
+GLuint hairTexture;
+
+// OUTFITS TEXTURES
+GLuint redClothTexture;
+GLuint brownClothTexture;
+
+// PROPS TEXTURES
+GLuint beltTexture;
 
 // Environment Textures
 GLuint skyTexture;
@@ -356,9 +356,6 @@ GLuint LoadTexture(const char* filePath)
 
 void LoadCommonTextures()
 {
-	// ===============
-	// COMMON TEXTURES
-	// ===============
 	brickTexture = LoadTexture("Assets/Common/Brick.bmp");
 	steelTexture = LoadTexture("Assets/Common/Steel.bmp");
 	woodTexture = LoadTexture("Assets/Common/Wood.bmp");
@@ -367,24 +364,25 @@ void LoadCommonTextures()
 	silverTexture = LoadTexture("Assets/Common/Silver.bmp");
 }
 
-void LoadIceCreamTextures()
+void LoadCharacterTextures()
 {
-	// ==================
-	// ICE CREAM TEXTURES
-	// ==================
-	// Cream Textures
-	matchaIceCreamTexture = LoadTexture("Assets/IceCream/MatchaIceCream.bmp");
-	chocolateIceCreamTexture = LoadTexture("Assets/IceCream/ChocolateIceCream.bmp");
-	vanillaIceCreamTexture = LoadTexture("Assets/IceCream/VanillaIceCream.bmp");
-	cookieCreamTexture = LoadTexture("Assets/IceCream/CookieCream.bmp");
+	skinTexture = LoadTexture("Assets/Character/Skin.bmp");
+	lipTexture = LoadTexture("Assets/Character/Lip.bmp");
+	eyelashTexture = LoadTexture("Assets/Character/Eyelash.bmp");
+	scleraTexture = LoadTexture("Assets/Character/Sclera.bmp");
+	pupilTexture = LoadTexture("Assets/Character/Pupil.bmp");
+	hairTexture = LoadTexture("Assets/Character/Hair.bmp");
+}
 
-	// Cookies
-	coneTexture = LoadTexture("Assets/IceCream/Cone.bmp");
-	oreoCookieTexture = LoadTexture("Assets/IceCream/OreoCookie.bmp");
-	waffleTexture = LoadTexture("Assets/IceCream/Waffle.bmp");
+void LoadOutfitTextures()
+{
+	redClothTexture = LoadTexture("Assets/Outfits/RedCloth.bmp");
+	brownClothTexture = LoadTexture("Assets/Outfits/BrownCloth.bmp");
+}
 
-	// Decoration
-	cherryTexture = LoadTexture("Assets/IceCream/Cherry.bmp");
+void LoadPropTextures()
+{
+	beltTexture = LoadTexture("Assets/Props/Belt.bmp");
 }
 
 void LoadEnvironmentTextures()
@@ -400,8 +398,9 @@ void InitTextures()
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4); // 4 byte alignment = r g b a (32 bits = 4 bytes)
 
 	LoadCommonTextures();
-
-	LoadIceCreamTextures();
+	LoadCharacterTextures();
+	LoadOutfitTextures();
+	LoadPropTextures();
 
 	gluQuadricTexture(quadric, GL_TRUE);
 	gluQuadricNormals(quadric, GLU_SMOOTH);
@@ -1623,54 +1622,82 @@ void DrawLightIndicator()
 
 void DrawHeadBase(float baseRadius, float baseHeight)
 {
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
+
 	glPushMatrix();
 	glScalef(1.1f, 1.0f, 1.2f);
 	DrawEnclosedCylinder(quadric, baseRadius, baseRadius, baseHeight, SLICES, STACKS);
 	glPopMatrix();
+
+	glDisable(GL_TEXTURE_2D);
 }
 void DrawUpperHead()
 {
 	float baseRadius = 0.1f;
 	float baseHeight = 0.1f;
 
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
+
 	glPushMatrix();
 	glScalef(1.1f, 1.0f, 1.2f);
 	glTranslatef(0.0f, baseHeight * 0.1f, 0.0f);
 	DrawSphere(quadric, baseRadius, SLICES, STACKS);
 	glPopMatrix();
+
+	glDisable(GL_TEXTURE_2D);
 }
 void DrawLowerHead()
 {
 	float baseRadius = 0.1f;
 	float baseHeight = 0.1f;
 
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
+
 	glPushMatrix();
 	glScalef(1.1f, 0.6f, 1.2f);
 	glTranslatef(0.0f, -baseHeight * 0.4f, 0.0f);
 	DrawSphere(quadric, baseRadius, SLICES, STACKS);
 	glPopMatrix();
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 void DrawEyeSclera(float side)
 {
 	float scleraRadius = 0.03f;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, scleraTexture);
+
 	glPushMatrix();
 	glTranslatef(side * scleraRadius / 2, 0.0f, scleraRadius * 0.2f);
 	glRotatef(side * 50.0f, 0.0f, 1.0f, 0.0f);
 	glScalef(1.0f, 0.8f, 0.5f);
 	DrawSphere(quadric, scleraRadius, SLICES, STACKS);
 	glPopMatrix();
+
+	glDisable(GL_TEXTURE_2D);
 }
 void DrawEyePupil(float side)
 {
 	float scleraRadius = 0.03f;
 	float pupilRadius = 0.007f;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, pupilTexture);
+
 	glPushMatrix();
 	glTranslatef(side * scleraRadius / 2, 0.0f, (scleraRadius * 0.6f + pupilRadius));
-	glRotatef(side * 35.0f, 0.0f, 1.0f, 0.0f);
-	glScalef(1.0f, 1.0f, 0.2f);
+	//glRotatef(side * 35.0f, 0.0f, 1.0f, 0.0f);
+	//glScalef(1.0f, 1.0f, 0.2f);
+	glRotatef(30.0f, 1.0f, 0.0f, 0.0f);
 	DrawSphere(quadric, pupilRadius, SLICES, STACKS);
 	glPopMatrix();
+
+	glDisable(GL_TEXTURE_2D);
 }
 void DrawEye(float side)
 {
@@ -1691,6 +1718,9 @@ void DrawEyelash()
 	float eyelashLength = 0.02f;
 	float eyelashThickness = 0.002f;
 
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, eyelashTexture);
+
 	// Middle Eyelash
 	glPushMatrix();
 	glTranslatef(-0.048f, baseRadius * 0.4f, baseRadius * 1.1f);
@@ -1701,22 +1731,24 @@ void DrawEyelash()
 
 	// Left Eyelash
 	glPushMatrix();
-	glTranslatef(0.0f, -0.015f, 0.0015f);
+	glTranslatef(0.0f, -eyelashLength, 0.0015f);
 	glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
-	DrawEnclosedCylinder(quadric, eyelashThickness, eyelashThickness, eyelashLength, SLICES, STACKS);
+	DrawEnclosedCylinder(quadric, 0.0f, eyelashThickness, eyelashLength, SLICES, STACKS);
 	glPopMatrix();
 	// END Left Eyelash
 
 	// Right Eyelash
 	glPushMatrix();
-	glTranslatef(0.0f, 0.015f, 0.0015f);
+	glTranslatef(0.0f, eyelashLength, 0.0015f);
 	glRotatef(10.0f, 1.0f, 0.0f, 0.0f);
-	DrawEnclosedCylinder(quadric, eyelashThickness, eyelashThickness, eyelashLength, SLICES, STACKS);
+	DrawEnclosedCylinder(quadric, eyelashThickness, 0.0f, eyelashLength, SLICES, STACKS);
 	glPopMatrix();
 	// END Right Eyelash
 
 	glPopMatrix();
 	// END Middle Eyelash
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 void DrawLeftEyelash()
@@ -1737,6 +1769,9 @@ void DrawLip(float length)
 {
 	float lipLength = length / 3;
 	float lipRadius = 0.003f;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, lipTexture);
 
 	// Middle Lip
 	glPushMatrix();
@@ -1764,6 +1799,8 @@ void DrawLip(float length)
 
 	glPopMatrix();
 	// END Middle Lip
+
+	glDisable(GL_TEXTURE_2D);
 }
 void DrawMouth()
 {
@@ -1791,6 +1828,9 @@ void DrawEar(float side)
 	float baseRadius = 0.1f;
 	float earSphereRadius = baseRadius * 0.3f;
 
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
+
 	glPushMatrix();
 
 	glTranslatef(baseRadius * 1.2f * side, -earSphereRadius * 0.5f, 0.0f);
@@ -1801,6 +1841,8 @@ void DrawEar(float side)
 	DrawSphere(quadric, earSphereRadius, SLICES, STACKS);
 
 	glPopMatrix();
+
+	glDisable(GL_TEXTURE_2D);
 }
 void DrawLeftEar() { DrawEar(-1.0f); }
 void DrawRightEar() { DrawEar(1.0f); }
@@ -1813,6 +1855,9 @@ void DrawNoseSide(float side)
 	float noseBaseRadius = baseRadius * 0.05f;
 	float noseBaseHeight = baseHeight * 0.15f;
 	float noseThickness = 0.7f;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
 
 	glPushMatrix();
 
@@ -1831,6 +1876,8 @@ void DrawNoseSide(float side)
 	);
 
 	glPopMatrix();
+
+	glDisable(GL_TEXTURE_2D);
 }
 void DrawNoseMiddle()
 {
@@ -1840,6 +1887,9 @@ void DrawNoseMiddle()
 	float noseBaseRadius = baseRadius * 0.05f;
 	float noseBaseHeight = baseHeight * 0.1f;
 	float noseThickness = 0.7f;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
 
 	glPushMatrix();
 
@@ -1856,6 +1906,8 @@ void DrawNoseMiddle()
 	);
 
 	glPopMatrix();
+
+	glDisable(GL_TEXTURE_2D);
 }
 void DrawNose()
 {
@@ -1870,6 +1922,9 @@ void DrawNose()
 
 void DrawTorsoPart(float baseRadius, float baseHeight)
 {
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
+
 	// Center Base
 	glPushMatrix();
 	glScalef(1.5f, 1.0f, 0.5f);
@@ -1885,6 +1940,8 @@ void DrawTorsoPart(float baseRadius, float baseHeight)
 
 	glPopMatrix();
 	// END Center Base
+	
+	glDisable(GL_TEXTURE_2D);
 }
 
 // --------------
@@ -1894,6 +1951,9 @@ void DrawTorsoPart(float baseRadius, float baseHeight)
 void DrawUpperArm(float armLength)
 {
 	float baseRadius = 0.03f;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
 
 	// Upper Arm Joint
 	glPushMatrix();
@@ -1909,12 +1969,17 @@ void DrawUpperArm(float armLength)
 
 	glPopMatrix();
 	// END Upper Arm Joint
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 void DrawLowerArm(float armLength)
 {
 	float upperBaseRadius = 0.03f;
 	float baseRadius = 0.02f;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
 
 	// Lower Arm Joint
 	glPushMatrix();
@@ -1930,10 +1995,15 @@ void DrawLowerArm(float armLength)
 
 	glPopMatrix();
 	// END Lower Arm Joint
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 void DrawFinger(float length)
 {
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
+
 	// Finger Joint 1
 	float joint1Radius = 0.005f;
 	glPushMatrix();
@@ -1994,6 +2064,8 @@ void DrawFinger(float length)
 
 	glPopMatrix();
 	// END Finger Joint 1
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 void DrawHand()
@@ -2008,6 +2080,9 @@ void DrawHand()
 	float littleLength = 0.014f;
 
 	float fingerSpacing = 0.0065f;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
 
 	// Palm
 	glPushMatrix();
@@ -2059,6 +2134,8 @@ void DrawHand()
 
 	glPopMatrix();
 	// END Palm
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 void DrawArm(float side)
@@ -2098,6 +2175,9 @@ void DrawUpperLeg(float legLength)
 {
 	float baseRadius = 0.03f;
 
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
+
 	// Upper Leg Joint
 	glPushMatrix();
 	DrawSphere(quadric, baseRadius, SLICES, STACKS);
@@ -2113,12 +2193,16 @@ void DrawUpperLeg(float legLength)
 	glPopMatrix();
 	// END Upper Leg Joint
 
+	glDisable(GL_TEXTURE_2D);
 }
 
 void DrawLowerLeg(float legLength)
 {
 	float upperBaseRadius = 0.03f;
 	float baseRadius = 0.02f;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
 
 	// Lower Leg Joint
 	glPushMatrix();
@@ -2133,10 +2217,15 @@ void DrawLowerLeg(float legLength)
 
 	glPopMatrix();
 	// END Lower Leg Joint
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 void DrawToe(float length, float joint1Radius, boolean isBigToe)
 {
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
+
 	glScalef(1.0f, 1.0f, 0.8f);
 
 	// Toe Joint 1
@@ -2212,6 +2301,8 @@ void DrawToe(float length, float joint1Radius, boolean isBigToe)
 
 	glPopMatrix();
 	// END Toe Joint 1
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 void DrawFoot()
@@ -2231,6 +2322,9 @@ void DrawFoot()
 	float littleToeRadius = 0.003f;
 
 	float toeSpacing = 0.01f;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
 
 	// Ankle
 	glPushMatrix();
@@ -2304,6 +2398,8 @@ void DrawFoot()
 
 	glPopMatrix();
 	// END Ankle
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 void DrawLeg(float side)
@@ -2388,9 +2484,12 @@ void DrawHead(float headBaseRadius, float headBaseHeight)
 
 void DrawNeck(float neckRadius, float neckHeight)
 {
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
 	glPushMatrix();
 	DrawEnclosedCylinder(quadric, neckRadius, neckRadius, neckHeight, SLICES, STACKS);
 	glPopMatrix();
+	glDisable(GL_TEXTURE_2D);
 }
 
 void DrawTorso(float torsoRadius, float torsoHeight)
@@ -2465,18 +2564,18 @@ void DrawHairStripsSide(float hairRadius, int numStrips, float side)
 {
 	float stripTubeRadius = (hairRadius * 1.4f / numStrips) / 2;
 	float stripEdgeRadius = stripTubeRadius * 0.5f;
-	float stripBentAngle = 190.0f;
-	float stripArcRadius = hairRadius * 0.98f;
-	int stripSegments = 50;
+	float stripBentAngle = 195.0f;
+	float stripArcRadius = hairRadius * 0.985f;
+	int stripSegments = 15;
 
-	float arcRadiusFactor = 0.987f;
+	float arcRadiusFactor = 0.98f;
 	float bentAngleFactor = 0.995f;
 
 	glPushMatrix();
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
 	glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
 	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
-	glScalef(1.0f, 0.999f, 0.9f);
+	glScalef(1.0f, 0.95f, 1.0f);
 
 	for (int i = 0; i < numStrips; i++)
 	{
@@ -2493,17 +2592,15 @@ void DrawHairStripsSide(float hairRadius, int numStrips, float side)
 
 void DrawHairStrips(float hairRadius)
 {
-	glTranslatef(0.0f, -hairRadius, 0.0f);
-
 	// Left Hair Strips
 	glPushMatrix();
-	DrawHairStripsSide(hairRadius, 10, -1.0f);
+	DrawHairStripsSide(hairRadius, 8, -1.0f);
 	glPopMatrix();
 	// END Left Hair Strips
 
 	// Right Hair Strips
 	glPushMatrix();
-	DrawHairStripsSide(hairRadius, 10, 1.0f);
+	DrawHairStripsSide(hairRadius, 8, 1.0f);
 	glPopMatrix();
 	// END Right Hair Strips
 	
@@ -2513,6 +2610,9 @@ void DrawHair(float headBaseRadius)
 {
 	float hairRadius = headBaseRadius * 1.2f;
 
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, hairTexture);
+
 	// Hair Scalp
 	glPushMatrix();
 	glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
@@ -2521,7 +2621,6 @@ void DrawHair(float headBaseRadius)
 
 	// Hair Strips
 	glPushMatrix();
-	glTranslatef(0.0f, hairRadius, 0.0f);
 	DrawHairStrips(hairRadius);
 	glPopMatrix();
 	// END Hair Strips
@@ -2587,16 +2686,21 @@ void DrawHair(float headBaseRadius)
 
 	glPopMatrix();
 	// END Hair Scalp
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 // ***********************
-// COSTUME FUNCTIONS
+// OUTFITS FUNCTIONS
 // ***********************
 
 void DrawRedVest(float torsoRadius, float torsoHeight)
 {
 	float vestRadius = torsoRadius * 1.2f;
 	float vestHeight = torsoRadius * 1.5f;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, redClothTexture);
 
 	// Left Side Vest
 	glPushMatrix();
@@ -2641,6 +2745,8 @@ void DrawRedVest(float torsoRadius, float torsoHeight)
 	DrawCuboidPolygon(torsoRadius, vestHeight, torsoRadius);
 	glPopMatrix();
 	// END Back Side Vest
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 void DrawPantLeg(float side, float torsoRadius)
@@ -2661,10 +2767,10 @@ void DrawPantLeg(float side, float torsoRadius)
 	DrawSphere(quadric, hemRadius, SLICES, STACKS);
 
 	// Opening
-	float openingRadius = hemRadius * 0.68f;
+	float openingRadius = hemRadius * 1.0f;
 	float openingHeight = legHeight * 0.05f;
 	glPushMatrix();
-	glTranslatef(0.0f, -hemRadius, 0.0f);
+	glTranslatef(0.0f, -hemRadius * 0.8f, 0.0f);
 	DrawEnclosedCylinder(quadric, openingRadius, openingRadius, openingHeight, SLICES, STACKS);
 	glPopMatrix();
 	// END Opening
@@ -2680,6 +2786,9 @@ void DrawPants(float torsoRadius)
 {
 	float upperPantRadius = 0.03f;
 	float upperPantHeight = torsoRadius * 2.3f;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, brownClothTexture);
 
 	// Waistband
 	glPushMatrix();
@@ -2700,6 +2809,8 @@ void DrawPants(float torsoRadius)
 
 	glPopMatrix();
 	// END Waistband
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 // ***********************
@@ -2711,6 +2822,10 @@ void DrawNeckRing(float neckRadius)
 	float ringRadius = neckRadius * 2.0f;
 	float ringHeight = 0.01f;
 	float thickness = 0.8f;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, goldTexture);
+
 	glPushMatrix();
 	glRotatef(5.0f, 1.0f, 0.0f, 0.0f);
 	DrawEnclosedCylinderWithThickness(quadric, ringRadius, ringRadius, ringHeight, thickness, SLICES, STACKS, LOOPS);
@@ -2725,12 +2840,17 @@ void DrawNeckRing(float neckRadius)
 	//glRotatef(95.0f, 1.0f, 0.0f, 0.0f);
 	//DrawEnclosedBentCylinder(quadric, ringRadius, ringRadius, ringArcRadius, ringBendAngle, ringSegments, SLICES, STACKS);
 	//glPopMatrix();
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 void DrawHairRibbon(float headBaseRadius)
 {
 	float ribbonBaseRadius = 0.034f;
 	float ribbonBaseHeight = 0.015f;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, redClothTexture);
 
 	// Center Cylinder
 	glPushMatrix();
@@ -2761,6 +2881,8 @@ void DrawHairRibbon(float headBaseRadius)
 
 	glPopMatrix();
 	// END Center Cylinder
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 void DrawHairRibbons(float headBaseRadius)
@@ -2785,6 +2907,9 @@ void DrawBelt(float torsoRadius)
 	float outerBeltRadius = torsoRadius * 1.2f;
 	float outerBeltHeight = 0.02f;
 	float outerBeltThickness = 0.8f;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, beltTexture);
 
 	// Center Belt
 	glPushMatrix();
@@ -2850,6 +2975,8 @@ void DrawBelt(float torsoRadius)
 
 	glPopMatrix();
 	// END Center Belt
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 // ***********************
@@ -3024,8 +3151,6 @@ void Display()
 	DrawLightIndicator();
 
 	// NeZha
-	//glEnable(GL_TEXTURE_2D);
-
 	float characterOffSetX = 0.0f;
 	float characterOffSetY = -0.13f;
 	float characterOffSetZ = -1.0f;
@@ -3033,11 +3158,8 @@ void Display()
 	glPushMatrix();
 	glTranslatef(characterOffSetX, characterOffSetY, characterOffSetZ);
 	DrawCharacter();
-	//DrawBentCylinder(quadric, 0.05f, 0.05f, 0.2f, 360.0f, 200, SLICES, STACKS);
 	glPopMatrix();
 	// END NeZha
-
-	//glDisable(GL_TEXTURE_2D);
 
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
