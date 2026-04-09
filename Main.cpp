@@ -2708,14 +2708,23 @@ void DrawPants(float torsoRadius)
 
 void DrawNeckRing(float neckRadius)
 {
-	float ringRadius = neckRadius * 2.0f;
-	float ringHeight = 0.01f;
-	float thickness = 0.8f;
+	float ringRadius = neckRadius * 0.3f;
+	float ringArcRadius = neckRadius * 2.0f;
+	float ringBendAngle = 360.0f;
+	int ringSegments = 50;
 
 	glPushMatrix();
-	glRotatef(5.0f, 1.0f, 0.0f, 0.0f);
-	DrawEnclosedCylinderWithThickness(quadric, ringRadius, ringRadius, ringHeight, thickness, SLICES, STACKS, LOOPS);
+	glRotatef(95.0f, 1.0f, 0.0f, 0.0f);
+	DrawEnclosedBentCylinder(quadric, ringRadius, ringRadius, ringArcRadius, ringBendAngle, ringSegments, SLICES, STACKS);
 	glPopMatrix();
+
+	//float ringRadius = neckRadius * 2.0f;
+	//float ringHeight = 0.01f;
+	//float thickness = 0.8f;
+	//glPushMatrix();
+	//glRotatef(5.0f, 1.0f, 0.0f, 0.0f);
+	//DrawEnclosedCylinderWithThickness(quadric, ringRadius, ringRadius, ringHeight, thickness, SLICES, STACKS, LOOPS);
+	//glPopMatrix();
 }
 
 void DrawHairRibbon(float headBaseRadius)
