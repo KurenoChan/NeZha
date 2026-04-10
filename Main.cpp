@@ -24,7 +24,8 @@ struct ColorList
 	std::vector<Color> colors;
 };
 
-enum CameraMode {
+enum CameraMode
+{
 	PERSPECTIVE,
 	ORTHO,
 	LSIDE,
@@ -34,25 +35,39 @@ enum CameraMode {
 
 CameraMode currentCameraMode = PERSPECTIVE;
 
-// global system values
-int questionNum = 1;
+// ===========
+// Scene Modes
+// ===========
+enum SceneMode
+{
+	INTERACT,
+	ANIMATION,
+	CHARACTER_CUSTOM,
+	WEAPON_CUSTOM
+};
 
-// Question 1
+SceneMode currentSceneMode = INTERACT;
+
+// ===========
 // Camera
+// ===========
 float cameraX = 0.0f;
 float cameraY = 0.0f;
 float cameraZ = 0.0f;
-float movementFactor = 0.1f;
 
 float cameraAngleX = 0.0f;
 float cameraAngleY = 0.0f;
 float cameraAngleZ = 0.0f;
-float rotationFactor = 2.0f;
 
+// ===========
 // Light
+// ===========
 float lightX = 0.0f;
 float lightY = 0.0f;
 float lightZ = 0.0f;
+
+float movementFactor = 0.1f;
+float rotationFactor = 2.0f;
 
 // Toggle Controls
 bool isCameraMode = false;
@@ -64,9 +79,69 @@ bool isLightOn = true;
 // ========================
 // MODEL CONTROL
 // ========================
+// NeZha Character Model
 float characterX = 0.0f;
 float characterY = 0.0f;
 float characterZ = 0.0f;
+
+// Character Parts
+struct PartRotation
+{
+	float angleX, angleY, angleZ;
+
+	float defaultX, defaultY, defaultZ;
+
+	float minX, maxX;
+	float minY, maxY;
+	float minZ, maxZ;
+};
+
+enum Part
+{
+	HEAD,
+
+	UPPER_TORSO,
+	LOWER_TORSO,
+
+	LEFT_UPPER_ARM,
+	LEFT_LOWER_ARM,
+	LEFT_HAND,
+
+	RIGHT_UPPER_ARM,
+	RIGHT_LOWER_ARM,
+	RIGHT_HAND,
+
+	LEFT_UPPER_LEG,
+	LEFT_LOWER_LEG,
+	LEFT_FOOT,
+
+	RIGHT_UPPER_LEG,
+	RIGHT_LOWER_LEG,
+	RIGHT_FOOT,
+
+	PART_COUNT
+};
+
+PartRotation parts[PART_COUNT];
+Part currentPart = HEAD;
+
+float headAngleX = 0.0f;
+float headAngleY = 0.0f;
+float headAngleZ = 0.0f;
+
+const float default_headAngleX = 0.0f;
+const float default_headAngleY = 0.0f;
+const float default_headAngleZ = 0.0f;
+
+const float MAX_HEADANGLEX = 20.0f;   // look down
+const float MIN_HEADANGLEX = -10.0f;  // look up
+
+const float MAX_HEADANGLEY = 60.0f;   // turn right
+const float MIN_HEADANGLEY = -60.0f;  // turn left
+
+const float MAX_HEADANGLEZ = 20.0f;   // tilt right
+const float MIN_HEADANGLEZ = -20.0f;  // tilt left
+
 
 // Textures [Q2]
 std::vector<GLuint> textures;
@@ -224,6 +299,16 @@ void ResetToggle()
 	isLightMode = false;
 }
 
+void ResetModel()
+{
+	for (int i = 0; i < PART_COUNT; i++)
+	{
+		parts[i].angleX = parts[i].defaultX;
+		parts[i].angleY = parts[i].defaultY;
+		parts[i].angleZ = parts[i].defaultZ;
+	}
+}
+
 void SetTexture(GLuint tex)
 {
 	currentTexture = tex;
@@ -235,6 +320,12 @@ void UpdateCurrentTexture()
 	{
 		currentTexture = textures[currentTextureIndex];
 	}
+}
+
+
+float Clamp(float v, float minV, float maxV)
+{
+	return max(minV, min(maxV, v));
 }
 
 // UINT = Unsigned integer e.g. Mouse Moved (Like email title)
@@ -256,6 +347,9 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 		break;
 
 	case WM_KEYDOWN:
+	{
+		PartRotation& part = parts[currentPart];
+
 		switch (wParam)
 		{
 		case VK_ESCAPE:
@@ -266,7 +360,16 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			//cameraY = -90.0f;
 			break;
 
-		case 0x31: // Press 1 - Draw Pyramid
+		case 0x31: // Press 1 - Interactive Movements
+			ResetCameraPosition();
+			ResetCameraAngle();
+			ResetLightPosition();
+			ResetToggle();
+			ResetModel();
+
+			currentSceneMode = INTERACT;
+			currentPart = HEAD;
+
 			break;
 
 
@@ -308,7 +411,16 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			{
 				lightZ -= movementFactor;
 			}
-
+			else
+			{
+				switch (currentSceneMode)
+				{
+				case INTERACT:
+					part.angleX -= rotationFactor;
+					part.angleX = Clamp(part.angleX, part.minX, part.maxX);
+					break;
+				}
+			}
 			break;
 		case 0x53: // S
 			if (isCameraMode)
@@ -319,7 +431,16 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			{
 				lightZ += movementFactor;
 			}
-
+			else
+			{
+				switch (currentSceneMode)
+				{
+				case INTERACT:
+					part.angleX += rotationFactor;
+					part.angleX = Clamp(part.angleX, part.minX, part.maxX);
+					break;
+				}
+			}
 			break;
 		case 0x41: // A
 			if (isCameraMode)
@@ -329,6 +450,16 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			else if (isLightMode)
 			{
 				lightX -= movementFactor;
+			}
+			else
+			{
+				switch (currentSceneMode)
+				{
+				case INTERACT:
+					part.angleY -= rotationFactor;
+					part.angleY = Clamp(part.angleY, part.minY, part.maxY);
+					break;
+				}
 			}
 			break;
 		case 0x44: // D
@@ -340,6 +471,16 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			{
 				lightX += movementFactor;
 			}
+			else
+			{
+				switch (currentSceneMode)
+				{
+				case INTERACT:
+					part.angleY += rotationFactor;
+					part.angleY = Clamp(part.angleY, part.minY, part.maxY);
+					break;
+				}
+			}
 			break;
 		case 0x51: // Q
 			if (isCameraMode)
@@ -350,6 +491,16 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			{
 				lightY -= movementFactor;
 			}
+			else
+			{
+				switch (currentSceneMode)
+				{
+				case INTERACT:
+					part.angleZ -= rotationFactor;
+					part.angleZ = Clamp(part.angleZ, part.minZ, part.maxZ);
+					break;
+				}
+			}
 			break;
 		case 0x45: // E
 			if (isCameraMode)
@@ -359,6 +510,16 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			else if (isLightMode)
 			{
 				lightY += movementFactor;
+			}
+			else
+			{
+				switch (currentSceneMode)
+				{
+				case INTERACT:
+					part.angleZ += rotationFactor;
+					part.angleZ = Clamp(part.angleZ, part.minZ, part.maxZ);
+					break;
+				}
 			}
 			break;
 
@@ -380,15 +541,48 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 				ToggleLight();
 			break;
 
+
+		case 0x5A:	// [Z]
+			switch (currentSceneMode)
+			{
+			case INTERACT:
+				// Switch to Previous Part
+				currentPart = (Part)((currentPart + PART_COUNT - 1) % PART_COUNT);
+				break;
+			}
+			break;
+
+		case 0x58:	// [X]
+			switch (currentSceneMode)
+			{
+			case INTERACT:
+				// Switch to Next Part
+				currentPart = (Part)((currentPart + 1) % PART_COUNT);
+				break;
+			}
+			break;
+
+		case 0x42:	// [B]
+			switch (currentSceneMode)
+			{
+			case CHARACTER_CUSTOM:
+				break;
+			case WEAPON_CUSTOM:
+				break;
+			}
+			break;
+
 		case VK_SPACE: // To reset the scene
 			ResetCameraPosition();
 			ResetCameraAngle();
 			ResetLightPosition();
 			ResetToggle();
+			ResetModel();
 			break;
 		}
 
 		break;
+	}
 
 	default:
 		break;
@@ -429,6 +623,96 @@ bool InitPixelFormat(HDC hdc)
 	{
 		return false;
 	}
+}
+
+void InitParts()
+{
+	// HEAD
+	parts[HEAD] =
+	{
+		0.0f, 0.0f, 0.0f,   // current angles
+
+		0.0f, 0.0f, 0.0f,   // defaults
+
+		-10.0f, 20.0f,      // X min/max
+		-60.0f, 60.0f,      // Y min/max
+		-20.0f, 20.0f       // Z min/max
+	};
+
+	// TORSO
+	parts[UPPER_TORSO] =
+	{
+
+	};
+
+	parts[LOWER_TORSO] =
+	{
+
+	};
+
+	// LEFT ARM
+	parts[LEFT_UPPER_ARM] =
+	{
+
+	};
+
+	parts[LEFT_LOWER_ARM] =
+	{
+
+	};
+
+	parts[LEFT_HAND] =
+	{
+
+	};
+
+	// RIGHT ARM
+	parts[RIGHT_UPPER_ARM] =
+	{
+
+	};
+
+	parts[RIGHT_LOWER_ARM] =
+	{
+
+	};
+
+	parts[RIGHT_HAND] =
+	{
+
+	};
+
+	// LEFT LEG
+	parts[LEFT_UPPER_LEG] =
+	{
+
+	};
+
+	parts[LEFT_LOWER_LEG] =
+	{
+
+	};
+
+	parts[LEFT_FOOT] =
+	{
+
+	};
+
+	// RIGHT LEG
+	parts[RIGHT_UPPER_LEG] =
+	{
+
+	};
+
+	parts[RIGHT_LOWER_LEG] =
+	{
+
+	};
+
+	parts[RIGHT_FOOT] =
+	{
+
+	};
 }
 
 GLuint LoadTexture(const char* filePath)
@@ -3183,8 +3467,12 @@ void DrawCharacter()
 	// Head
 	float headBaseRadius = 0.1f;
 	float headBaseHeight = 0.05f;
+	PartRotation& head = parts[HEAD];
 	glPushMatrix();
 	glTranslatef(0.0f, neckHeight + headBaseHeight * 0.8f, 0.0f);
+	glRotatef(head.angleX, 1.0f, 0.0f, 0.0f);
+	glRotatef(head.angleY, 0.0f, 1.0f, 0.0f);
+	glRotatef(head.angleZ, 0.0f, 0.0f, 1.0f);
 	DrawHead(headBaseRadius, headBaseHeight);
 
 	// Hair
@@ -3513,6 +3801,9 @@ int WINAPI WinMain(
 
 	// Initialize textures used
 	InitTextures();
+
+	// Initialize parts
+	InitParts();
 
 	//--------------------------------
 	//	End initialization
