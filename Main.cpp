@@ -25,10 +25,11 @@ struct ColorList
 };
 
 enum CameraMode {
-	ORTHO,
 	PERSPECTIVE,
-	BRIDGE_VIEW,    // fixed point around the bridge
-	THIRD_PERSON    // follows the car
+	ORTHO,
+	LSIDE,
+	RSIDE,
+	CAMERA_COUNT
 };
 
 CameraMode currentCameraMode = PERSPECTIVE;
@@ -53,6 +54,20 @@ float lightX = 0.0f;
 float lightY = 0.0f;
 float lightZ = 0.0f;
 
+// Toggle Controls
+bool isCameraMode = false;
+bool isLightMode = false;
+
+bool isLightOn = true;
+
+
+// ========================
+// MODEL CONTROL
+// ========================
+float characterX = 0.0f;
+float characterY = 0.0f;
+float characterZ = 0.0f;
+
 // Textures [Q2]
 std::vector<GLuint> textures;
 int currentTextureIndex = 0;
@@ -61,9 +76,32 @@ GLuint currentTexture;
 // -------------------
 // Lighting Setup
 // -------------------
-GLfloat lightAmbient[] = { 0.7f, 0.7f, 0.7f, 1.0f };	// ambient = minimum brightness of scene
-GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };	// diffuse = real lighting that reveals geometry
-GLfloat lightSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };	// specular = how glossy the surface looks
+// LIGHT 1: Default Spotlight
+GLfloat light1Ambient[] = { 0.7f, 0.7f, 0.7f, 1.0f };	// ambient = minimum brightness of scene
+GLfloat light1Diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };	// diffuse = real lighting that reveals geometry
+GLfloat light1Specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };	// specular = how glossy the surface looks
+Color light1Color = { 0.8f, 0.8f, 0.8f };
+
+// LIGHT 2: Warm Sunset / Golden Hour
+GLfloat light2Ambient[] = { 0.2f, 0.1f, 0.1f, 1.0f };    // Deep reddish shadows
+GLfloat light2Diffuse[] = { 1.0f, 0.7f, 0.3f, 1.0f };    // Strong orange/gold light
+GLfloat light2Specular[] = { 1.0f, 0.9f, 0.7f, 1.0f };   // Bright yellow-white glints
+Color light2Color = { 1.0f, 0.7f, 0.3f };
+
+// LIGHT 3: Cold Moonlight / Cyberpunk
+GLfloat light3Ambient[] = { 0.1f, 0.1f, 0.2f, 1.0f };    // Faint blue ambient
+GLfloat light3Diffuse[] = { 0.4f, 0.6f, 1.0f, 1.0f };    // Cool blue-white light
+GLfloat light3Specular[] = { 0.8f, 0.8f, 1.0f, 1.0f };   // Sharp icy highlights
+Color light3Color = { 0.4f, 0.6f, 1.0f };
+
+// Collection of lights for easy looping
+const GLfloat* lightsAmbient[] = { light1Ambient, light2Ambient, light3Ambient };
+const GLfloat* lightsDiffuse[] = { light1Diffuse, light2Diffuse, light3Diffuse };
+const GLfloat* lightsSpecular[] = { light1Specular, light2Specular, light3Specular };
+const Color* lightsColor[] = { &light1Color, &light2Color, &light3Color };
+
+const int NUM_LIGHTS = sizeof(lightsAmbient) / sizeof(lightsAmbient[0]);
+int lightIndex = 0;
 
 // -------------------
 // Material Setup
@@ -175,6 +213,17 @@ void ResetLightPosition()
 	lightZ = 0.0f;
 }
 
+void ToggleLight()
+{
+	isLightOn = !isLightOn;
+}
+
+void ResetToggle()
+{
+	isCameraMode = false;
+	isLightMode = false;
+}
+
 void SetTexture(GLuint tex)
 {
 	currentTexture = tex;
@@ -214,74 +263,128 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			break;
 
 		case 0x30: // Press 0 - DEBUG
-			cameraY = -90.0f;
+			//cameraY = -90.0f;
 			break;
 
 		case 0x31: // Press 1 - Draw Pyramid
 			break;
 
-			// --------------
-			// CAMERA CONTROL
-			// --------------
+
+			// ----------------------
+			// CAMERA / LIGHT CONTROL
+			// ----------------------
+		case 'C':
+			isCameraMode = !isCameraMode;
+			isLightMode = false;
+			break;
+		case 'V':
+			isCameraMode = false;
+			isLightMode = !isLightMode;
+			break;
+
 		case VK_LEFT:
-			cameraAngleY -= rotationFactor;
+			if (isCameraMode)
+				cameraAngleY -= rotationFactor;
 			break;
 		case VK_RIGHT:
-			cameraAngleY += rotationFactor;
+			if (isCameraMode)
+				cameraAngleY += rotationFactor;
 			break;
 		case VK_UP:
-			cameraAngleX -= rotationFactor;
+			if (isCameraMode)
+				cameraAngleX -= rotationFactor;
 			break;
 		case VK_DOWN:
-			cameraAngleX += rotationFactor;
+			if (isCameraMode)
+				cameraAngleX += rotationFactor;
 			break;
 
 		case 0x57: // W
-			cameraZ -= movementFactor;
+			if (isCameraMode)
+			{
+				cameraZ -= movementFactor;
+			}
+			else if (isLightMode)
+			{
+				lightZ -= movementFactor;
+			}
+
 			break;
 		case 0x53: // S
-			cameraZ += movementFactor;
+			if (isCameraMode)
+			{
+				cameraZ += movementFactor;
+			}
+			else if (isLightMode)
+			{
+				lightZ += movementFactor;
+			}
+
 			break;
 		case 0x41: // A
-			cameraX -= movementFactor;
+			if (isCameraMode)
+			{
+				cameraX -= movementFactor;
+			}
+			else if (isLightMode)
+			{
+				lightX -= movementFactor;
+			}
 			break;
 		case 0x44: // D
-			cameraX += movementFactor;
+			if (isCameraMode)
+			{
+				cameraX += movementFactor;
+			}
+			else if (isLightMode)
+			{
+				lightX += movementFactor;
+			}
 			break;
 		case 0x51: // Q
-			cameraY -= movementFactor;
+			if (isCameraMode)
+			{
+				cameraY -= movementFactor;
+			}
+			else if (isLightMode)
+			{
+				lightY -= movementFactor;
+			}
 			break;
 		case 0x45: // E
-			cameraY += movementFactor;
+			if (isCameraMode)
+			{
+				cameraY += movementFactor;
+			}
+			else if (isLightMode)
+			{
+				lightY += movementFactor;
+			}
 			break;
 
-			// --------------
-			// LIGHT CONTROL
-			// --------------
-		case 0x55: // To move light forward [U]
-			lightZ -= movementFactor;
+		case 'O':
+			if (isCameraMode)		// Switch to Previous Projection
+				currentCameraMode = (CameraMode)((currentCameraMode + CAMERA_COUNT - 1) % CAMERA_COUNT);
+			else if (isLightMode)	// Switch Light
+				lightIndex = (lightIndex + NUM_LIGHTS - 1) % NUM_LIGHTS;
 			break;
-		case 0x4A: // To move light backward [J]
-			lightZ += movementFactor;
-			break;
-		case 0x48: // To move light left [H]
-			lightX -= movementFactor;
-			break;
-		case 0x4B: // To move light right [K]
-			lightX += movementFactor;
-			break;
-		case 0x59: // To move light down [Y]
-			lightY -= movementFactor;
-			break;
-		case 0x49: // To move light up [I]
-			lightY += movementFactor;
+		case 'P':
+			if (isCameraMode)		// Switch to Next Projection
+				currentCameraMode = (CameraMode)((currentCameraMode + 1) % CAMERA_COUNT);
+			else if (isLightMode)
+				lightIndex = (lightIndex + 1) % NUM_LIGHTS;
 			break;
 
+		case 'L':
+			if (isLightMode)		// Switch On/Off Light
+				ToggleLight();
+			break;
 
-		case VK_SPACE: // To reset camera and light position and angle
+		case VK_SPACE: // To reset the scene
 			ResetCameraPosition();
 			ResetCameraAngle();
 			ResetLightPosition();
+			ResetToggle();
 			break;
 		}
 
@@ -1547,17 +1650,56 @@ void SetOrthoProjection(float left, float right, float bottom, float top, float 
 // CAMERA SETUP
 // -----------------
 
+void SetupCameraMode()
+{
+	switch (currentCameraMode)
+	{
+	case PERSPECTIVE:
+		SetPerspectiveProjection(60.0f, 1.0f, 0.1f, 100.0f);
+		// Camera (inverse transform)
+		glRotatef(-cameraAngleX, 1.0f, 0.0f, 0.0f);
+		glRotatef(-cameraAngleY, 0.0f, 1.0f, 0.0f);
+		glRotatef(-cameraAngleZ, 0.0f, 0.0f, 1.0f);
+		glTranslatef(-cameraX, -cameraY, -cameraZ);
+		break;
+
+	case ORTHO:
+		SetOrthoProjection(-0.5f, 0.5f, -0.5f, 0.5f, 0.1f, 100.0f);
+		// Camera (inverse transform)
+		glRotatef(-cameraAngleX, 1.0f, 0.0f, 0.0f);
+		glRotatef(-cameraAngleY, 0.0f, 1.0f, 0.0f);
+		glRotatef(-cameraAngleZ, 0.0f, 0.0f, 1.0f);
+		glTranslatef(-cameraX, -cameraY, -cameraZ);
+		break;
+
+	case LSIDE:
+		SetPerspectiveProjection(60.0f, 1.0f, 0.1f, 100.0f);
+
+		gluLookAt(
+			-1.0f, 1.0f, 0.0f,						// cam position (left side)
+			characterX, characterY, characterZ,		// character position
+			0.0f, 1.0f, 0.0f						// up vector
+		);
+
+		break;
+	case RSIDE:
+		SetPerspectiveProjection(60.0f, 1.0f, 0.1f, 100.0f);
+
+		gluLookAt(
+			1.0f, 1.0f, 0.0f,						// cam position (right side)
+			characterX, characterY, characterZ,		// character position
+			0.0f, 1.0f, 0.0f						// up vector
+		);
+
+		break;
+	}
+}
+
 void SetupCamera()
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	SetPerspectiveProjection(60.0f, 1.0f, 0.1f, 100.0f);
-
-	glTranslatef(-cameraX, -cameraY, -cameraZ);
-	glRotatef(-cameraAngleX, 1, 0, 0);
-	glRotatef(-cameraAngleY, 0, 1, 0);
-	glRotatef(-cameraAngleZ, 0, 0, 1);
-
+	SetupCameraMode();
 	glMatrixMode(GL_MODELVIEW);
 }
 
@@ -1566,20 +1708,23 @@ void SetupCamera()
 // -----------------
 void SetupLighting()
 {
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-
-	glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
-
-	if (questionNum == 4)
+	if (isLightOn)
 	{
-		lightZ = cameraZ;
-	}
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
 
-	GLfloat lightPosition[] = { lightX, lightY, lightZ, 1.0f };
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+		glLightfv(GL_LIGHT0, GL_AMBIENT, lightsAmbient[lightIndex]);
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, lightsDiffuse[lightIndex]);
+		glLightfv(GL_LIGHT0, GL_SPECULAR, lightsSpecular[lightIndex]);
+
+		GLfloat lightPosition[] = { lightX, lightY, lightZ, 1.0f };
+		glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+	}
+	else
+	{
+		glDisable(GL_LIGHT0);
+		glDisable(GL_LIGHTING);
+	}
 }
 
 void ResetMaterial()
@@ -1596,13 +1741,23 @@ void DrawLightIndicator()
 	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
 
-	Color lightVisualizerColor = { 1.0f, 1.0f, 0.0f };
+	if (isLightOn)
+	{
 
-	glPushMatrix();
-	glTranslatef(lightX, lightY, lightZ);
-	glColor3f(lightVisualizerColor.r, lightVisualizerColor.g, lightVisualizerColor.b);
-	DrawSphere(quadric, 0.03f, SLICES, STACKS);
-	glPopMatrix();
+		//Color lightVisualizerColor = { 1.0f, 1.0f, 0.0f };
+		const Color lightVisualizerColor =
+		{
+			lightsColor[lightIndex]->r,
+			lightsColor[lightIndex]->g,
+			lightsColor[lightIndex]->b
+		};
+
+		glPushMatrix();
+		glTranslatef(lightX, lightY, lightZ);
+		glColor3f(lightVisualizerColor.r, lightVisualizerColor.g, lightVisualizerColor.b);
+		DrawSphere(quadric, 0.03f, SLICES, STACKS);
+		glPopMatrix();
+	}
 
 	glEnable(GL_LIGHTING);
 	// END DEBUG [LIGHT VISUALIZER]
@@ -1940,7 +2095,7 @@ void DrawTorsoPart(float baseRadius, float baseHeight)
 
 	glPopMatrix();
 	// END Center Base
-	
+
 	glDisable(GL_TEXTURE_2D);
 }
 
@@ -2603,7 +2758,7 @@ void DrawHairStrips(float hairRadius)
 	DrawHairStripsSide(hairRadius, 8, 1.0f);
 	glPopMatrix();
 	// END Right Hair Strips
-	
+
 }
 
 void DrawHair(float headBaseRadius)
@@ -3041,7 +3196,6 @@ void DrawCharacter()
 	glPopMatrix();
 	// END Neck
 
-
 	// Arms
 	glPushMatrix();
 	glTranslatef(0.0f, torsoHeight, 0.0f);
@@ -3151,12 +3305,11 @@ void Display()
 	DrawLightIndicator();
 
 	// NeZha
-	float characterOffSetX = 0.0f;
-	float characterOffSetY = -0.13f;
-	float characterOffSetZ = -1.0f;
-	float characterSize = 1.0f;
+	characterX = 0.0f;
+	characterY = -0.13f;
+	characterZ = -1.0f;
 	glPushMatrix();
-	glTranslatef(characterOffSetX, characterOffSetY, characterOffSetZ);
+	glTranslatef(characterX, characterY, characterZ);
 	DrawCharacter();
 	glPopMatrix();
 	// END NeZha
