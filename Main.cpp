@@ -273,11 +273,11 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			// ----------------------
 			// CAMERA / LIGHT CONTROL
 			// ----------------------
-		case 'C':
+		case 0x43:		// [C]
 			isCameraMode = !isCameraMode;
 			isLightMode = false;
 			break;
-		case 'V':
+		case 0x56:		// [V]
 			isCameraMode = false;
 			isLightMode = !isLightMode;
 			break;
