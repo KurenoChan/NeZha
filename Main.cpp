@@ -2651,7 +2651,6 @@ void DrawTorso(float torsoRadius, float torsoHeight)
 {
 	// Upper Torso
 	glPushMatrix();
-	//glRotatef(-10.0f, 1.0f, 0.0f, 0.0f);
 	DrawTorsoPart(torsoRadius, torsoHeight);
 	glPopMatrix();
 	// END Upper Torso
@@ -2668,11 +2667,11 @@ void DrawTorso(float torsoRadius, float torsoHeight)
 
 void DrawArms()
 {
-	float torsoOffsetX = 0.085f;
+	float torsoArmsOffsetX = 0.095f;
 
 	// Left Arm
 	glPushMatrix();
-	glTranslatef(-torsoOffsetX, 0.0f, 0.0f);
+	glTranslatef(-torsoArmsOffsetX, 0.0f, 0.0f);
 	glRotatef(-30.0f, 0.0f, 1.0f, 0.0f);
 	glRotatef(80.0f, 0.0f, 0.0f, 1.0f);
 	DrawArm(-1.0f);
@@ -2681,7 +2680,7 @@ void DrawArms()
 
 	// Right Arm
 	glPushMatrix();
-	glTranslatef(torsoOffsetX, 0.0f, 0.0f);
+	glTranslatef(torsoArmsOffsetX, 0.0f, 0.0f);
 	glRotatef(30.0f, 0.0f, 1.0f, 0.0f);
 	glRotatef(-80.0f, 0.0f, 0.0f, 1.0f);
 	DrawArm(1.0f);
@@ -2689,24 +2688,28 @@ void DrawArms()
 	// END Right Arm
 }
 
-void DrawLegs()
+void DrawLegs(float torsoRadius)
 {
-	float torsoOffsetX = 0.04f;
+	float torsoLegOffsetX = 0.04f;
 
 	// Left Leg
 	glPushMatrix();
-	glTranslatef(-torsoOffsetX, 0.0f, 0.0f);
+	glTranslatef(-torsoLegOffsetX, 0.0f, 0.0f);
 	//glRotatef(-30.0f, 0.0f, 0.0f, 1.0f);
 	DrawLeg(-1.0f);
+
+
+
 	glPopMatrix();
 	// END Left Leg
 
 	// Right Leg
 	glPushMatrix();
-	glTranslatef(torsoOffsetX, 0.0f, 0.0f);
+	glTranslatef(torsoLegOffsetX, 0.0f, 0.0f);
 	//glRotatef(-30.0f, 1.0f, 0.0f, 0.0f);
 	//glRotatef(-30.0f, 0.0f, 0.0f, 1.0f);
 	DrawLeg(1.0f);
+
 	glPopMatrix();
 	// END Right Leg
 }
@@ -2939,8 +2942,8 @@ void DrawPantLeg(float side, float torsoRadius)
 
 void DrawPants(float torsoRadius)
 {
-	float upperPantRadius = 0.03f;
-	float upperPantHeight = torsoRadius * 2.3f;
+	float upperPantRadius = 0.034f;
+	float upperPantHeight = torsoRadius * 2.5f;
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, brownClothTexture);
@@ -3152,7 +3155,16 @@ void DrawCharacter()
 	float torsoRadius = 0.06f;
 	float torsoHeight = 0.03f;
 	glPushMatrix();
-	DrawTorso(torsoRadius, torsoHeight);
+
+	// Upper Torso
+	glPushMatrix();
+	DrawTorsoPart(torsoRadius, torsoHeight);
+
+	// Red Vest [COSTUME]
+	glPushMatrix();
+	DrawRedVest(torsoRadius, torsoHeight);
+	glPopMatrix();
+	// END Red Vest [COSTUME]
 
 	// Neck
 	float neckRadius = 0.02f;
@@ -3196,39 +3208,151 @@ void DrawCharacter()
 	glPopMatrix();
 	// END Neck
 
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
+
 	// Arms
 	glPushMatrix();
 	glTranslatef(0.0f, torsoHeight, 0.0f);
-	DrawArms();
+
+	float torsoArmsOffsetX = 0.095f;
+
+	// Left Arm
+	glPushMatrix();
+	glTranslatef(-torsoArmsOffsetX, 0.0f, 0.0f);
+	glRotatef(-30.0f, 0.0f, 1.0f, 0.0f);
+	glRotatef(80.0f, 0.0f, 0.0f, 1.0f);
+	DrawArm(-1.0f);
+	glPopMatrix();
+	// END Left Arm
+
+	// Right Arm
+	glPushMatrix();
+	glTranslatef(torsoArmsOffsetX, 0.0f, 0.0f);
+	glRotatef(30.0f, 0.0f, 1.0f, 0.0f);
+	glRotatef(-80.0f, 0.0f, 0.0f, 1.0f);
+	DrawArm(1.0f);
+	glPopMatrix();
+	// END Right Arm
+
 	glPopMatrix();
 	// END Arms
 
+	glPopMatrix();
+	// END Upper Torso
+
+	glDisable(GL_TEXTURE_2D);
+
+	// --------------------
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
+
+	// Lower Torso
+	glPushMatrix();
+	glTranslatef(0.0f, -torsoHeight, 0.0f);
+	glScalef(1.0f, -1.0f, 1.0f);
+	DrawTorsoPart(torsoRadius, torsoHeight);
+
+	glDisable(GL_TEXTURE_2D);
+
+	glScalef(1.0f, -1.0f, 1.0f);
+
+	// Upper Pant
+	float upperPantRadius = 0.034f;
+	float upperPantHeight = torsoRadius * 2.5f;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, brownClothTexture);
+
+	// Waistband
+	glPushMatrix();
+	glTranslatef(0.0f, -torsoHeight * 2.5f, 0.0f);
+	glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
+	DrawEnclosedCylinder(quadric, upperPantRadius, upperPantRadius, upperPantHeight, SLICES, STACKS);
+	glPopMatrix();
+	// END Waistband
+
+	glDisable(GL_TEXTURE_2D);
+	// END Upper Pant
+
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
+
 	// Legs
 	glPushMatrix();
-	glTranslatef(0.0f, -torsoHeight * 3, 0.0f);
-	DrawLegs();
+	glTranslatef(0.0f, -torsoHeight * 2.5f, 0.0f);
 
-	// Pants
+	float torsoLegOffsetX = 0.04f;
+
+	// Left Leg
 	glPushMatrix();
-	DrawPants(torsoRadius);
+	glTranslatef(-torsoLegOffsetX, 0.0f, 0.0f);
+	//glRotatef(-30.0f, 0.0f, 0.0f, 1.0f);
+	DrawLeg(-1.0f);
+
+	glDisable(GL_TEXTURE_2D);
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, brownClothTexture);
+
+	// Pant Leg [LEFT]
+	glPushMatrix();
+	glTranslatef(0.0f, 0.0f, -torsoRadius * 0.65f);
+	glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+	glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+	DrawPantLeg(-1.0f, torsoRadius);
 	glPopMatrix();
-	// END Pants
+	// END Pant Leg [LEFT]
+
+	glPopMatrix();
+	// END Left Leg
+
+	glDisable(GL_TEXTURE_2D);
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
+
+	// Right Leg
+	glPushMatrix();
+	glTranslatef(torsoLegOffsetX, 0.0f, 0.0f);
+	//glRotatef(-30.0f, 1.0f, 0.0f, 0.0f);
+	//glRotatef(-30.0f, 0.0f, 0.0f, 1.0f);
+	DrawLeg(1.0f);
+
+	glDisable(GL_TEXTURE_2D);
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, brownClothTexture);
+
+	// Pant Leg [RIGHT]
+	glPushMatrix();
+	glTranslatef(0.0f, 0.0f, -torsoRadius * 0.65f);
+	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+	glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
+	DrawPantLeg(1.0f, torsoRadius);
+	glPopMatrix();
+	// END Pant Leg [RIGHT]
+
+	glDisable(GL_TEXTURE_2D);
+
+	glPopMatrix();
+	// END Right Leg	
+
+	glPopMatrix();
+	// END Legs
 
 	// Belt
 	glPushMatrix();
-	glTranslatef(0.0f, 0.01f, 0.0f);
+	glTranslatef(0.0f, -torsoHeight * 2.0f, 0.0f);
 	DrawBelt(torsoRadius);
 	glPopMatrix();
 	// END Belt
 
 	glPopMatrix();
-	// END Legs
-
-	// Red Vest [COSTUME]
-	glPushMatrix();
-	DrawRedVest(torsoRadius, torsoHeight);
-	glPopMatrix();
-	// END Red Vest [COSTUME]
+	// END Lower Torso
 
 	glPopMatrix();
 	// END Torso
