@@ -362,20 +362,20 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			}
 			break;
 
-		case 'O':
+		case 0x4F:	// [O]
 			if (isCameraMode)		// Switch to Previous Projection
 				currentCameraMode = (CameraMode)((currentCameraMode + CAMERA_COUNT - 1) % CAMERA_COUNT);
 			else if (isLightMode)	// Switch Light
 				lightIndex = (lightIndex + NUM_LIGHTS - 1) % NUM_LIGHTS;
 			break;
-		case 'P':
+		case 0x50:	// [P]
 			if (isCameraMode)		// Switch to Next Projection
 				currentCameraMode = (CameraMode)((currentCameraMode + 1) % CAMERA_COUNT);
 			else if (isLightMode)
 				lightIndex = (lightIndex + 1) % NUM_LIGHTS;
 			break;
 
-		case 'L':
+		case 0x4C:	// [L]
 			if (isLightMode)		// Switch On/Off Light
 				ToggleLight();
 			break;
