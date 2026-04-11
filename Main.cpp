@@ -125,23 +125,7 @@ enum Part
 PartRotation parts[PART_COUNT];
 Part currentPart = HEAD;
 
-float headAngleX = 0.0f;
-float headAngleY = 0.0f;
-float headAngleZ = 0.0f;
-
-const float default_headAngleX = 0.0f;
-const float default_headAngleY = 0.0f;
-const float default_headAngleZ = 0.0f;
-
-const float MAX_HEADANGLEX = 20.0f;   // look down
-const float MIN_HEADANGLEX = -10.0f;  // look up
-
-const float MAX_HEADANGLEY = 60.0f;   // turn right
-const float MIN_HEADANGLEY = -60.0f;  // turn left
-
-const float MAX_HEADANGLEZ = 20.0f;   // tilt right
-const float MIN_HEADANGLEZ = -20.0f;  // tilt left
-
+float partRotationFactor = 5.0f;
 
 // Textures [Q2]
 std::vector<GLuint> textures;
@@ -416,7 +400,7 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 				switch (currentSceneMode)
 				{
 				case INTERACT:
-					part.angleX -= rotationFactor;
+					part.angleX -= partRotationFactor;
 					part.angleX = Clamp(part.angleX, part.minX, part.maxX);
 					break;
 				}
@@ -436,7 +420,7 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 				switch (currentSceneMode)
 				{
 				case INTERACT:
-					part.angleX += rotationFactor;
+					part.angleX += partRotationFactor;
 					part.angleX = Clamp(part.angleX, part.minX, part.maxX);
 					break;
 				}
@@ -456,7 +440,7 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 				switch (currentSceneMode)
 				{
 				case INTERACT:
-					part.angleY -= rotationFactor;
+					part.angleY -= partRotationFactor;
 					part.angleY = Clamp(part.angleY, part.minY, part.maxY);
 					break;
 				}
@@ -476,7 +460,7 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 				switch (currentSceneMode)
 				{
 				case INTERACT:
-					part.angleY += rotationFactor;
+					part.angleY += partRotationFactor;
 					part.angleY = Clamp(part.angleY, part.minY, part.maxY);
 					break;
 				}
@@ -496,7 +480,7 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 				switch (currentSceneMode)
 				{
 				case INTERACT:
-					part.angleZ -= rotationFactor;
+					part.angleZ -= partRotationFactor;
 					part.angleZ = Clamp(part.angleZ, part.minZ, part.maxZ);
 					break;
 				}
@@ -516,7 +500,7 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 				switch (currentSceneMode)
 				{
 				case INTERACT:
-					part.angleZ += rotationFactor;
+					part.angleZ += partRotationFactor;
 					part.angleZ = Clamp(part.angleZ, part.minZ, part.maxZ);
 					break;
 				}
@@ -642,76 +626,160 @@ void InitParts()
 	// TORSO
 	parts[UPPER_TORSO] =
 	{
+		0.0f, 0.0f, 0.0f,
 
+		0.0f, 0.0f, 0.0f,
+
+		-5.0f, 20.0f,
+		-15.0f, 15.0f,
+		-8.0f, 8.0f
 	};
 
 	parts[LOWER_TORSO] =
 	{
+		0.0f, 0.0f, 0.0f,
 
+		0.0f, 0.0f, 0.0f,
+
+		-20.0f, 5.0f,
+		-15.0f, 15.0f,
+		-8.0f, 8.0f
 	};
 
 	// LEFT ARM
 	parts[LEFT_UPPER_ARM] =
 	{
+		0.0f, 0.0f, 0.0f,
 
+		0.0f, 0.0f, 0.0f,
+
+		-20.0f, 20.0f,
+		-30.0f, 100.0f,
+		-80.0f, 80.0f
 	};
 
 	parts[LEFT_LOWER_ARM] =
 	{
+		0.0f, 0.0f, 0.0f,
 
+		0.0f, 0.0f, 0.0f,
+
+		-10.0f, 70.0f,
+		0.0f, 130.0f,
+		0.0f, 0.0f
 	};
 
 	parts[LEFT_HAND] =
 	{
+		0.0f, 0.0f, 0.0f,
 
+		0.0f, 0.0f, 0.0f,
+
+		-100.0f, 10.0f,
+		-30.0f, 30.0f,
+		-50.0f, 80.0f
 	};
 
 	// RIGHT ARM
 	parts[RIGHT_UPPER_ARM] =
 	{
+		0.0f, 0.0f, 0.0f,
 
+		0.0f, 0.0f, 0.0f,
+
+		-20.0f, 20.0f,
+		-30.0f, 100.0f,
+		-80.0f, 80.0f
 	};
 
 	parts[RIGHT_LOWER_ARM] =
 	{
+		0.0f, 0.0f, 0.0f,
 
+		0.0f, 0.0f, 0.0f,
+
+		-10.0f, 70.0f,
+		0.0f, 130.0f,
+		0.0f, 0.0f
 	};
 
 	parts[RIGHT_HAND] =
 	{
+		0.0f, 0.0f, 0.0f,
 
+		0.0f, 0.0f, 0.0f,
+
+		-10.0f, 100.0f,
+		-30.0f, 30.0f,
+		-80.0f, 50.0f
 	};
 
 	// LEFT LEG
 	parts[LEFT_UPPER_LEG] =
 	{
+		0.0f, 0.0f, 0.0f,
 
+		0.0f, 0.0f, 0.0f,
+
+		-50.0f, 50.0f,
+		-10.0f, 20.0f,
+		-10.0f, 50.0f
 	};
 
 	parts[LEFT_LOWER_LEG] =
 	{
+		0.0f, 0.0f, 0.0f,
 
+		0.0f, 0.0f, 0.0f,
+
+		0.0f, 120.0f,
+		0.0f, 0.0f,
+		0.0f, 0.0f
 	};
 
 	parts[LEFT_FOOT] =
 	{
+		0.0f, 0.0f, 0.0f,
 
+		0.0f, 0.0f, 0.0f,
+
+		-5.0f, 50.0f,
+		0.0f, 0.0f,
+		-30.0f, 5.0f
 	};
 
 	// RIGHT LEG
 	parts[RIGHT_UPPER_LEG] =
 	{
+		0.0f, 0.0f, 0.0f,
 
+		0.0f, 0.0f, 0.0f,
+
+		-50.0f, 50.0f,
+		-10.0f, 20.0f,
+		-10.0f, 50.0f
 	};
 
 	parts[RIGHT_LOWER_LEG] =
 	{
+		0.0f, 0.0f, 0.0f,
 
+		0.0f, 0.0f, 0.0f,
+
+		0.0f, 120.0f,
+		0.0f, 0.0f,
+		0.0f, 0.0f
 	};
 
 	parts[RIGHT_FOOT] =
 	{
+		0.0f, 0.0f, 0.0f,
 
+		0.0f, 0.0f, 0.0f,
+
+		-5.0f, 50.0f,
+		0.0f, 0.0f,
+		-30.0f, 5.0f
 	};
 }
 
@@ -2582,19 +2650,35 @@ void DrawArm(float side)
 	float upperArmLength = 0.06f;
 	float lowerArmLength = 0.08f;
 
+	glRotatef((side + 1.0f) * 90.0f, 0.0f, 0.0f, 1.0f);
+
 	// Upper Arm
 	glPushMatrix();
-	glRotatef((side + 1.0f) * 90.0f, 0.0f, 0.0f, 1.0f);
+	PartRotation& upperArm =
+		(side < 0) ? parts[LEFT_UPPER_ARM] : parts[RIGHT_UPPER_ARM];
+	glRotatef(upperArm.angleX, 1, 0, 0);
+	glRotatef(upperArm.angleY, 0, 1, 0);
+	glRotatef(upperArm.angleZ, 0, 0, 1);
 	DrawUpperArm(upperArmLength);
 
 	// Lower Arm
 	glPushMatrix();
 	glTranslatef(-(upperArmLength / 2 + lowerArmLength / 2), 0.0f, 0.0f);
+	PartRotation& lowerArm =
+		(side < 0) ? parts[LEFT_LOWER_ARM] : parts[RIGHT_LOWER_ARM];
+	glRotatef(lowerArm.angleX, 1, 0, 0);
+	glRotatef(lowerArm.angleY, 0, 1, 0);
+	glRotatef(lowerArm.angleZ, 0, 0, 1);
 	DrawLowerArm(lowerArmLength);
 
 	// Hand
 	glPushMatrix();
 	glTranslatef(-lowerArmLength, 0.0f, 0.0f);
+	PartRotation& hand =
+		(side < 0) ? parts[LEFT_HAND] : parts[RIGHT_HAND];
+	glRotatef(hand.angleX, 1, 0, 0);
+	glRotatef(hand.angleY, 0, 1, 0);
+	glRotatef(hand.angleZ, 0, 0, 1);
 	DrawHand();
 	glPopMatrix();
 	// END Hand
@@ -2841,29 +2925,120 @@ void DrawFoot()
 	glDisable(GL_TEXTURE_2D);
 }
 
-void DrawLeg(float side)
+void DrawLeg(float side, float torsoRadius)
 {
 	float upperLegLength = 0.06f;
 	float lowerLegLength = 0.07f;
 
 	glScalef(side, 1.0f, 1.0f);
 
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
+
 	// Upper Leg
 	glPushMatrix();
+
+	PartRotation& upperLeg =
+		(side < 0) ? parts[LEFT_UPPER_LEG] : parts[RIGHT_UPPER_LEG];
+	glRotatef(upperLeg.angleX, 1, 0, 0);
+	glRotatef(upperLeg.angleY, 0, 1, 0);
+	glRotatef(upperLeg.angleZ, 0, 0, 1);
+
 	glRotatef(0.0f, 0.0f, (side + 1.0f) * 90.0f, 1.0f);
 	DrawUpperLeg(upperLegLength);
+
+	glDisable(GL_TEXTURE_2D);
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, brownClothTexture);
+
+	// Upper Pant Leg
+	float legRadius = 0.03f;
+
+	glPushMatrix();
+	glTranslatef(0.0f, -upperLegLength / 2, 0.0f);
+	glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+	glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+	glRotatef(-90.0f, 0.0f, 0.0f, 1.0f);
+	DrawCylinder(quadric, legRadius * 0.8f, legRadius, upperLegLength, SLICES, STACKS);
+	glPopMatrix();
+	// END Upper Pant Leg
+
+	// Pant Joint
+	float pantJointRadius = legRadius * 0.8f;
+	glPushMatrix();
+	glTranslatef(0.0f, -upperLegLength, 0.0f);
+	DrawSphere(quadric, pantJointRadius, SLICES, STACKS);
+	glPopMatrix();
+	// END Pant Joint
+
+	glDisable(GL_TEXTURE_2D);
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
 
 	// Lower Leg
 	glPushMatrix();
 	glTranslatef(0.0f, -(upperLegLength / 2 + lowerLegLength / 2), 0.0f);
+	PartRotation& lowerLeg =
+		(side < 0) ? parts[LEFT_LOWER_LEG] : parts[RIGHT_LOWER_LEG];
+	glRotatef(lowerLeg.angleX, 1, 0, 0);
+	glRotatef(lowerLeg.angleY, 0, 1, 0);
+	glRotatef(lowerLeg.angleZ, 0, 0, 1);
 	DrawLowerLeg(lowerLegLength);
+
+	glDisable(GL_TEXTURE_2D);
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, brownClothTexture);
+
+	// Lower Pant Leg
+	glPushMatrix();
+	glTranslatef(0.0f, -lowerLegLength * 0.4f, 0.0f);
+	glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+	glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+	glRotatef(-90.0f, 0.0f, 0.0f, 1.0f);
+	DrawCylinder(quadric, legRadius * 0.35f, legRadius * 0.75f, lowerLegLength * 0.7f, SLICES, STACKS);
+
+	// Hem
+	float hemRadius = lowerLegLength * 0.13f;
+	glPushMatrix();
+	glTranslatef(0.0f, -(lowerLegLength * 0.7f) / 2, 0.0f);
+	DrawSphere(quadric, hemRadius, SLICES, STACKS);
+
+	// Opening
+	float openingRadius = hemRadius * 1.0f;
+	float openingHeight = lowerLegLength * 0.05f;
+	glPushMatrix();
+	glTranslatef(0.0f, -hemRadius * 0.7f, 0.0f);
+	DrawEnclosedCylinder(quadric, openingRadius, openingRadius, openingHeight, SLICES, STACKS);
+	glPopMatrix();
+	// END Opening
+
+	glPopMatrix();
+	// END Hem
+
+	glPopMatrix();
+	// END Lower Pant Leg
+
+	glDisable(GL_TEXTURE_2D);
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, skinTexture);
 
 	// Foot
 	glPushMatrix();
 	glTranslatef(0.0f, -lowerLegLength, 0.0f);
+	PartRotation& foot =
+		(side < 0) ? parts[LEFT_FOOT] : parts[RIGHT_FOOT];
+	glRotatef(foot.angleX, 1, 0, 0);
+	glRotatef(foot.angleY, 0, 1, 0);
+	glRotatef(foot.angleZ, 0, 0, 1);
 	DrawFoot();
 	glPopMatrix();
 	// END Foot
+
+	glDisable(GL_TEXTURE_2D);
 
 	glPopMatrix();
 	// END Lower Leg
@@ -2980,10 +3155,7 @@ void DrawLegs(float torsoRadius)
 	glPushMatrix();
 	glTranslatef(-torsoLegOffsetX, 0.0f, 0.0f);
 	//glRotatef(-30.0f, 0.0f, 0.0f, 1.0f);
-	DrawLeg(-1.0f);
-
-
-
+	DrawLeg(-1.0f, torsoRadius);
 	glPopMatrix();
 	// END Left Leg
 
@@ -2992,7 +3164,7 @@ void DrawLegs(float torsoRadius)
 	glTranslatef(torsoLegOffsetX, 0.0f, 0.0f);
 	//glRotatef(-30.0f, 1.0f, 0.0f, 0.0f);
 	//glRotatef(-30.0f, 0.0f, 0.0f, 1.0f);
-	DrawLeg(1.0f);
+	DrawLeg(1.0f, torsoRadius);
 
 	glPopMatrix();
 	// END Right Leg
@@ -3442,6 +3614,10 @@ void DrawCharacter()
 
 	// Upper Torso
 	glPushMatrix();
+	PartRotation& upperTorso = parts[UPPER_TORSO];
+	glRotatef(upperTorso.angleX, 1.0f, 0.0f, 0.0f);
+	glRotatef(upperTorso.angleY, 0.0f, 1.0f, 0.0f);
+	glRotatef(upperTorso.angleZ, 0.0f, 0.0f, 1.0f);
 	DrawTorsoPart(torsoRadius, torsoHeight);
 
 	// Red Vest [COSTUME]
@@ -3467,9 +3643,9 @@ void DrawCharacter()
 	// Head
 	float headBaseRadius = 0.1f;
 	float headBaseHeight = 0.05f;
-	PartRotation& head = parts[HEAD];
 	glPushMatrix();
 	glTranslatef(0.0f, neckHeight + headBaseHeight * 0.8f, 0.0f);
+	PartRotation& head = parts[HEAD];
 	glRotatef(head.angleX, 1.0f, 0.0f, 0.0f);
 	glRotatef(head.angleY, 0.0f, 1.0f, 0.0f);
 	glRotatef(head.angleZ, 0.0f, 0.0f, 1.0f);
@@ -3509,8 +3685,6 @@ void DrawCharacter()
 	// Left Arm
 	glPushMatrix();
 	glTranslatef(-torsoArmsOffsetX, 0.0f, 0.0f);
-	glRotatef(-30.0f, 0.0f, 1.0f, 0.0f);
-	glRotatef(80.0f, 0.0f, 0.0f, 1.0f);
 	DrawArm(-1.0f);
 	glPopMatrix();
 	// END Left Arm
@@ -3518,8 +3692,7 @@ void DrawCharacter()
 	// Right Arm
 	glPushMatrix();
 	glTranslatef(torsoArmsOffsetX, 0.0f, 0.0f);
-	glRotatef(30.0f, 0.0f, 1.0f, 0.0f);
-	glRotatef(-80.0f, 0.0f, 0.0f, 1.0f);
+
 	DrawArm(1.0f);
 	glPopMatrix();
 	// END Right Arm
@@ -3540,6 +3713,10 @@ void DrawCharacter()
 	// Lower Torso
 	glPushMatrix();
 	glTranslatef(0.0f, -torsoHeight, 0.0f);
+	PartRotation& lowerTorso = parts[LOWER_TORSO];
+	glRotatef(lowerTorso.angleX, 1.0f, 0.0f, 0.0f);
+	glRotatef(lowerTorso.angleY, 0.0f, 1.0f, 0.0f);
+	glRotatef(lowerTorso.angleZ, 0.0f, 0.0f, 1.0f);
 	glScalef(1.0f, -1.0f, 1.0f);
 	DrawTorsoPart(torsoRadius, torsoHeight);
 
@@ -3578,22 +3755,21 @@ void DrawCharacter()
 	// Left Leg
 	glPushMatrix();
 	glTranslatef(-torsoLegOffsetX, 0.0f, 0.0f);
-	//glRotatef(-30.0f, 0.0f, 0.0f, 1.0f);
-	DrawLeg(-1.0f);
+	DrawLeg(-1.0f, torsoRadius);
 
 	glDisable(GL_TEXTURE_2D);
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, brownClothTexture);
 
-	// Pant Leg [LEFT]
-	glPushMatrix();
-	glTranslatef(0.0f, 0.0f, -torsoRadius * 0.65f);
-	glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-	glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-	DrawPantLeg(-1.0f, torsoRadius);
-	glPopMatrix();
-	// END Pant Leg [LEFT]
+	//// Pant Leg [LEFT]
+	//glPushMatrix();
+	//glTranslatef(0.0f, 0.0f, -torsoRadius * 0.65f);
+	//glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+	//glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+	//DrawPantLeg(-1.0f, torsoRadius);
+	//glPopMatrix();
+	//// END Pant Leg [LEFT]
 
 	glPopMatrix();
 	// END Left Leg
@@ -3608,21 +3784,21 @@ void DrawCharacter()
 	glTranslatef(torsoLegOffsetX, 0.0f, 0.0f);
 	//glRotatef(-30.0f, 1.0f, 0.0f, 0.0f);
 	//glRotatef(-30.0f, 0.0f, 0.0f, 1.0f);
-	DrawLeg(1.0f);
+	DrawLeg(1.0f, torsoRadius);
 
 	glDisable(GL_TEXTURE_2D);
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, brownClothTexture);
 
-	// Pant Leg [RIGHT]
-	glPushMatrix();
-	glTranslatef(0.0f, 0.0f, -torsoRadius * 0.65f);
-	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
-	glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
-	DrawPantLeg(1.0f, torsoRadius);
-	glPopMatrix();
-	// END Pant Leg [RIGHT]
+	//// Pant Leg [RIGHT]
+	//glPushMatrix();
+	//glTranslatef(0.0f, 0.0f, -torsoRadius * 0.65f);
+	//glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+	//glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
+	//DrawPantLeg(1.0f, torsoRadius);
+	//glPopMatrix();
+	//// END Pant Leg [RIGHT]
 
 	glDisable(GL_TEXTURE_2D);
 
@@ -3632,12 +3808,12 @@ void DrawCharacter()
 	glPopMatrix();
 	// END Legs
 
-	// Belt
-	glPushMatrix();
-	glTranslatef(0.0f, -torsoHeight * 2.0f, 0.0f);
-	DrawBelt(torsoRadius);
-	glPopMatrix();
-	// END Belt
+	//// Belt
+	//glPushMatrix();
+	//glTranslatef(0.0f, -torsoHeight * 2.0f, 0.0f);
+	//DrawBelt(torsoRadius);
+	//glPopMatrix();
+	//// END Belt
 
 	glPopMatrix();
 	// END Lower Torso
